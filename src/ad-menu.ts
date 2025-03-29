@@ -38,7 +38,7 @@ export class AdMenu extends QinColumn {
             button.styleAsMaxWidth(100);
             button.putAsColumn();
             button.addActionMain((_) => {
-                this.qinpel.chief.newJobber(
+                this.qinpel.window.newFrame(
                     item.module.title,
                     item.module.appName,
                     AdTools.newAdSetupOption(item.module, [AdScope.ALL])
@@ -70,7 +70,7 @@ export class AdMenu extends QinColumn {
 }
 
 export function adMenuStartUp(menus: AdMenuItem[]): QinBase {
-    const adSetup = Qine.qinpel.jobbed.getOption(AdNames.AdSetup) as AdSetup;
+    const adSetup = Qine.qinpel.frame.getOption(AdNames.AdSetup) as AdSetup;
     if (adSetup && adSetup.module) {
         for (const menu of menus) {
             if (AdTools.isSameModule(menu.module, adSetup.module)) {

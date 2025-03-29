@@ -1,12 +1,12 @@
 import {
-  QinAsset,
-  QinBase,
-  QinButton,
-  QinColumn,
-  QinIcon,
-  QinLabel,
-  QinSplitter,
-  QinStack,
+    QinAsset,
+    QinBase,
+    QinButton,
+    QinColumn,
+    QinIcon,
+    QinLabel,
+    QinSplitter,
+    QinStack,
 } from "qin_case";
 import { QinAction, QinEvent } from "qin_soul";
 import { AdApprise, AdApprised } from "./ad-apprise";
@@ -106,38 +106,38 @@ export class AdRegister extends QinColumn {
         this._table.tabIndex = 2;
         this.initViewSchema();
         this.addActionKey(["esc", "escape"], (_) => {
-            this.tryCancel().then((_) => this.qinpel.jobbed.close());
+            this.tryCancel().then((_) => this.qinpel.frame.close());
         });
     }
 
     private initViewSchema() {
         let sideA = parseInt(
-            this.qinpel.chief.loadConfig(
+            this.qinpel.window.loadConfig(
                 this._identifier + "-" + AdRegParams.VIEW_VERTICAL_SIDE_A,
                 "50"
             )
         );
         let sideB = parseInt(
-            this.qinpel.chief.loadConfig(
+            this.qinpel.window.loadConfig(
                 this._identifier + "-" + AdRegParams.VIEW_VERTICAL_SIDE_B,
                 "50"
             )
         );
         this._viewVertical.setBalance({ sideA, sideB });
         sideA = parseInt(
-            this.qinpel.chief.loadConfig(
+            this.qinpel.window.loadConfig(
                 this._identifier + "-" + AdRegParams.VIEW_HORIZONTAL_SIDE_A,
                 "50"
             )
         );
         sideB = parseInt(
-            this.qinpel.chief.loadConfig(
+            this.qinpel.window.loadConfig(
                 this._identifier + "-" + AdRegParams.VIEW_HORIZONTAL_SIDE_B,
                 "50"
             )
         );
         this._viewHorizontal.setBalance({ sideA, sideB });
-        let selectedView = this.qinpel.chief.loadConfig(
+        let selectedView = this.qinpel.window.loadConfig(
             this._identifier + "-" + AdRegParams.VIEW_SELECTED,
             AdRegParams.VIEW_SELECTED_VERTICAL
         );
@@ -153,21 +153,21 @@ export class AdRegister extends QinColumn {
 
     private initSaveBalances() {
         this._viewVertical.addOnChanged((balance) => {
-            this.qinpel.chief.saveConfig(
+            this.qinpel.window.saveConfig(
                 this._identifier + "-" + AdRegParams.VIEW_VERTICAL_SIDE_A,
                 balance.sideA.toString()
             );
-            this.qinpel.chief.saveConfig(
+            this.qinpel.window.saveConfig(
                 this._identifier + "-" + AdRegParams.VIEW_VERTICAL_SIDE_B,
                 balance.sideB.toString()
             );
         });
         this._viewHorizontal.addOnChanged((balance) => {
-            this.qinpel.chief.saveConfig(
+            this.qinpel.window.saveConfig(
                 this._identifier + "-" + AdRegParams.VIEW_HORIZONTAL_SIDE_A,
                 balance.sideA.toString()
             );
-            this.qinpel.chief.saveConfig(
+            this.qinpel.window.saveConfig(
                 this._identifier + "-" + AdRegParams.VIEW_HORIZONTAL_SIDE_B,
                 balance.sideB.toString()
             );
@@ -276,7 +276,7 @@ export class AdRegister extends QinColumn {
         let action = (_) => {
             this.tryConfirm().then(() => {
                 if (!this.hasRowSelected()) {
-                    this.qinpel.jobbed.showError(
+                    this.qinpel.frame.showError(
                         "You must select a row before show the details of " + detailTitle,
                         "{qia_admister}(ErrCode-000015)"
                     );
@@ -308,7 +308,7 @@ export class AdRegister extends QinColumn {
                         }
                     }
                 }
-                this.qinpel.chief.newJobber(
+                this.qinpel.window.newFrame(
                     detailTitle,
                     detail.setup.module.appName,
                     AdTools.newAdSetupOption(
@@ -330,10 +330,10 @@ export class AdRegister extends QinColumn {
     }
 
     public prepare() {
-        this.qinpel.jobbed.addOnFocusGain(() => {
+        this.qinpel.frame.addOnFocusGain(() => {
             if (this._regMode == AdRegMode.NOTICE) {
                 this.tryRefresh().catch((err) =>
-                    this.qinpel.jobbed.showError(err, "{qia_admister}(ErrCode-000017)")
+                    this.qinpel.frame.showError(err, "{qia_admister}(ErrCode-000017)")
                 );
             }
         });
@@ -351,7 +351,7 @@ export class AdRegister extends QinColumn {
         for (const fixed of this._expect.fixed) {
             const field = this.model.getFieldByName(fixed.name);
             if (!field) {
-                this.qinpel.jobbed.showError(
+                this.qinpel.frame.showError(
                     "Could not set the fixed value for field " + fixed.name + ".",
                     "{qia_admister}(ErrCode-000019)"
                 );
@@ -380,14 +380,14 @@ export class AdRegister extends QinColumn {
                 });
                 if (allLinkedFields.length > 0) {
                     let actionRelater: QinAction = (_) => {
-                        let jobber = this.qinpel.chief.newJobber(
+                        let frame = this.qinpel.window.newFrame(
                             join.module.title,
                             join.module.appName,
                             AdTools.newAdSetupOption(join.module, [AdScope.RELATE])
                         );
-                        jobber.addWaiter((res) => {
+                        frame.addWaiter((res) => {
                             if (!this.regModeEditable) {
-                                this.qinpel.jobbed.showError(
+                                this.qinpel.frame.showError(
                                     "You should not receive a related register on a not editable mode.",
                                     "{qia_admister}(ErrCode-000014)"
                                 );
@@ -400,7 +400,7 @@ export class AdRegister extends QinColumn {
                                 let linkedValue = res[allLinkedWith[i]];
                                 allLinkedFields[i].value = linkedValue;
                             }
-                            this.qinpel.jobbed.show();
+                            this.qinpel.frame.show();
                         });
                     };
                     let buttonRelater = new QinButton({
@@ -471,7 +471,7 @@ export class AdRegister extends QinColumn {
         this.qinpel.talk
             .post("/reg/ask", select)
             .then((res) => {
-                let rows = this.qinpel.our.soul.body.getCSVRows(res.data);
+                let rows = this.qinpel.ours.soul.body.getCSVRows(res.data);
                 if (rows.length > 0) {
                     let row = rows[0];
                     for (let i = 0; i < toUpdate.length; i++) {
@@ -509,7 +509,7 @@ export class AdRegister extends QinColumn {
                 }
                 this.finish();
             })
-            .catch((err) => this.qinpel.jobbed.showError(err, "{qia_admister}(ErrCode-000016)"));
+            .catch((err) => this.qinpel.frame.showError(err, "{qia_admister}(ErrCode-000016)"));
     }
 
     private initShortcuts() {
@@ -664,8 +664,8 @@ export class AdRegister extends QinColumn {
                 for (let i = 0; i < this._model.fields.length; i++) {
                     selected[this._model.fields[i].name] = values[i];
                 }
-                this.qinpel.jobbed.sendWaiters(selected);
-                this.qinpel.jobbed.close();
+                this.qinpel.frame.sendWaiters(selected);
+                this.qinpel.frame.close();
                 return;
             }
             this.tryTurnMode(AdRegMode.NOTICE)
@@ -949,7 +949,7 @@ export class AdRegister extends QinColumn {
                 reject({ why: "No selected row to delete" });
                 return;
             }
-            this.qinpel.jobbed
+            this.qinpel.frame
                 .showDialog("Do you really want to delete?")
                 .then((want) => {
                     if (want) {
@@ -985,7 +985,7 @@ export class AdRegister extends QinColumn {
             if (mutations) {
                 let message =
                     "There are mutations on:\n" + mutations.join(", ") + "\nShould we continue?";
-                this.qinpel.jobbed.showDialog(message).then((confirmed) => {
+                this.qinpel.frame.showDialog(message).then((confirmed) => {
                     if (confirmed) {
                         resolve();
                     } else {
@@ -1001,21 +1001,21 @@ export class AdRegister extends QinColumn {
     public displayInfo(info: any, origin: string) {
         if (info instanceof AdApprised) {
             if (info.popup) {
-                this.qinpel.jobbed.showInfo(info, origin);
+                this.qinpel.frame.showInfo(info, origin);
             }
         }
-        this.qinpel.jobbed.statusInfo(info, origin);
+        this.qinpel.frame.statusInfo(info, origin);
     }
 
     public displayError(error: any, origin: string) {
         if (error instanceof AdApprised) {
             if (error.popup) {
-                this.qinpel.jobbed.showError(error, origin);
+                this.qinpel.frame.showError(error, origin);
             }
         } else {
-            this.qinpel.jobbed.showError(error, origin);
+            this.qinpel.frame.showError(error, origin);
         }
-        this.qinpel.jobbed.statusError(error, origin);
+        this.qinpel.frame.statusError(error, origin);
     }
 
     public viewSingle() {
@@ -1031,7 +1031,7 @@ export class AdRegister extends QinColumn {
         }
         this._regView = AdRegView.SINGLE;
         this.callDidListeners(AdRegTurn.TURN_VIEW, { newValue: this._regView });
-        this.qinpel.chief.saveConfig(
+        this.qinpel.window.saveConfig(
             this._identifier + "-" + AdRegParams.VIEW_SELECTED,
             AdRegParams.VIEW_SELECTED_SINGLE
         );
@@ -1047,7 +1047,7 @@ export class AdRegister extends QinColumn {
         this._table.reDisplay();
         this._regView = AdRegView.VERTICAL;
         this.callDidListeners(AdRegTurn.TURN_VIEW, { newValue: this._regView });
-        this.qinpel.chief.saveConfig(
+        this.qinpel.window.saveConfig(
             this._identifier + "-" + AdRegParams.VIEW_SELECTED,
             AdRegParams.VIEW_SELECTED_VERTICAL
         );
@@ -1063,7 +1063,7 @@ export class AdRegister extends QinColumn {
         this._table.reDisplay();
         this._regView = AdRegView.HORIZONTAL;
         this.callDidListeners(AdRegTurn.TURN_VIEW, { newValue: this._regView });
-        this.qinpel.chief.saveConfig(
+        this.qinpel.window.saveConfig(
             this._identifier + "-" + AdRegParams.VIEW_SELECTED,
             AdRegParams.VIEW_SELECTED_HORIZONTAL
         );

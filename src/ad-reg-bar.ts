@@ -183,7 +183,7 @@ export class AdRegBar extends QinLine {
             this._reg
                 .tryDelete()
                 .then((_) => {
-                    this.qinpel.jobbed.showInfo(
+                    this.qinpel.frame.showInfo(
                         AdApprise.DELETED_REGISTER,
                         "{qia_admister}(ErrCode-000011)"
                     );

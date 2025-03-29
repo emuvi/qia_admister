@@ -48,7 +48,7 @@ export class AdRegCalls {
             }
             Qine.qinpel.talk
                 .post("/reg/ask", query)
-                .then((res) => resolve(Qine.qinpel.our.soul.body.getCSVRows(res.data)))
+                .then((res) => resolve(Qine.qinpel.ours.soul.body.getCSVRows(res.data)))
                 .catch((err) => reject(err));
         });
     }

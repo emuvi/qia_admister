@@ -1,5 +1,4 @@
 import os
-import sys
 
 
 def install():
@@ -29,5 +28,3 @@ def generate_and_build():
 
 if __name__ == "__main__":
     generate_and_build()
-else:
-    sys.modules[__name__] = generate_and_build

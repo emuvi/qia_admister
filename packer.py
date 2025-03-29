@@ -1,5 +1,4 @@
 import os
-import sys
 
 
 def pack_browser(mode: str):
@@ -12,5 +11,3 @@ def pack_browser(mode: str):
 
 if __name__ == "__main__":
     pack_browser("development")
-else:
-    sys.modules[__name__] = pack_browser

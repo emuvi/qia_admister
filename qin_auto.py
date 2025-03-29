@@ -1,11 +1,10 @@
 import shutil
-import sys
 import urllib.request
 
 
 def self_automagic():
     print("Updating the magic...")
-    download("https://github.com/pointel-com-br/qin_soul/raw/master/qin_magic.py", "qin_magic.py")
+    download("https://github.com/emuvi/qin_soul/raw/refs/heads/master/qin_magic.py", "qin_magic.py")
     with open("qin_magic.py") as file:
         exec(file.read(), globals())
 
@@ -17,5 +16,3 @@ def download(origin: str, destiny: str):
 
 if __name__ == "__main__":
     self_automagic()
-else:
-    sys.modules[__name__] = self_automagic

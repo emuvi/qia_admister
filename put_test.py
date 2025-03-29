@@ -1,3 +1,3 @@
 import put_on
 
-put_on.make("admister", put_on.Mode.TEST, put_on.Kind.APP)
+put_on.install("admister", put_on.Mode.TEST, put_on.Kind.APP)

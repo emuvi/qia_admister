@@ -46,7 +46,5 @@ def mk_all():
             file.write("\n")
 
 
-if __name__ == "__main__" or __name__ == "gen_build":
+if __name__ == "__main__" or __name__ == "builder":
     mk_all()
-else:
-    sys.modules[__name__] = mk_all

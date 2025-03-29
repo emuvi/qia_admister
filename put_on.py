@@ -2,8 +2,8 @@ import os
 import shutil
 from enum import Enum
 
-import gen_build
-import pk_browser
+import builder
+import packer
 
 
 class Mode(Enum):
@@ -16,15 +16,19 @@ class Kind(Enum):
     PUB = 1
 
 
-def make(name: str, mode: Mode, kind: Kind):
+def install(name: str, mode: Mode, kind: Kind):
     qin_root = os.environ['QIN_ROOT']
     destiny_root = f"{qin_root}/{'Prod' if mode == Mode.PROD else 'Test'}"
-    gen_build()
-    pk_browser("production" if mode == Mode.PROD else "development")
+    builder.generate_and_build()
+    packer.pack_browser("production" if mode == Mode.PROD else "development")
     print("Publishing...")
     if os.path.isdir("public"):
         destiny = f"{destiny_root}/{'pub' if kind == Kind.PUB else 'app'}/{name}"
-        shutil.copytree("./public", destiny, dirs_exist_ok=True)
+        if os.path.isdir(destiny):
+            shutil.rmtree(destiny)
+        shutil.copytree("./public", destiny)
     if os.path.isdir("giz"):
         destiny = f"{destiny_root}/giz/{name}"
-        shutil.copytree("./giz", destiny, dirs_exist_ok=True)
+        if os.path.isdir(destiny):
+            shutil.rmtree(destiny)
+        shutil.copytree("./giz", destiny)

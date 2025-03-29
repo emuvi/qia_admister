@@ -1,13 +1,13 @@
 import {
-  QinAsset,
-  QinButton,
-  QinColumn,
-  QinCombo,
-  QinComboItem,
-  QinIcon,
-  QinLine,
-  QinScroll,
-  QinString,
+    QinAsset,
+    QinButton,
+    QinColumn,
+    QinCombo,
+    QinComboItem,
+    QinIcon,
+    QinLine,
+    QinScroll,
+    QinString,
 } from "qin_case";
 import { AdField } from "./ad-field";
 import { AdFilter, AdFilterLikes, AdFilterSeems, AdFilterTies } from "./ad-filter";
@@ -25,7 +25,7 @@ export class AdRegSearch extends QinScroll {
         super();
         this._reg = register;
         this.idSelected = register.identifier + "-LastSearchSelected";
-        this.lastSelected = this.qinpel.chief.loadConfig(this.idSelected);
+        this.lastSelected = this.qinpel.window.loadConfig(this.idSelected);
         this._lines.install(this);
         const first = new SearchClause(this);
         this._clauses.push(first);
@@ -127,7 +127,7 @@ class SearchClause extends QinLine {
         this._qinField.addOnChanged((result) => {
             if (this._dad.lastSelected !== result) {
                 this._dad.lastSelected = result;
-                this.qinpel.chief.saveConfig(this._dad.idSelected, result);
+                this.qinpel.window.saveConfig(this._dad.idSelected, result);
             }
         });
         this._qinAdd.addActionMain((_) => {
