@@ -25,7 +25,7 @@ def app_automagic():
 def app_mk_put_mode(app_name: str, mode: str):
     kind = 'PUB'
     folder_name = get_folder_name()
-    if folder_name.startswith("qia_") or folder_name == "qin_case":
+    if folder_name.startswith("qia_"):
         kind = "APP"
     source = f"""import put_on
 
