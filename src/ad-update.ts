@@ -1,9 +1,9 @@
 import { AdFilter } from "./ad-filter";
-import { AdRegistier } from "./ad-registier";
+import { AdRegistry } from "./ad-registry";
 import { AdValued } from "./ad-valued";
 
 export type AdUpdate = {
-    registier: AdRegistier;
+    registier: AdRegistry;
     valueds: AdValued[];
     filters?: AdFilter[];
     limit?: number;

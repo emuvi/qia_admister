@@ -39,7 +39,7 @@ export class AdRegCalls {
             if (query.joins) {
                 for (let join of query.joins) {
                     if (!join.registry) {
-                        join.registry = join.module.registry;
+                        join.registry = join.module.tableHead;
                     }
                     if (!join.ties) {
                         join.ties = AdJoinedTies.LEFT;

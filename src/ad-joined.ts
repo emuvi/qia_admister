@@ -1,10 +1,10 @@
 import { AdFilter } from "./ad-filter";
-import { AdRegistry } from "./ad-registry";
+import { AdTableHead } from "./ad-table-head";
 import { AdModule } from "./ad-tools";
 
 export type AdJoined = {
     module: AdModule;
-    registry?: AdRegistry;
+    registry?: AdTableHead;
     alias?: string;
     filters?: AdFilter[];
     ties?: AdJoinedTies;

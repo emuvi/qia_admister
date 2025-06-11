@@ -4,7 +4,7 @@ import { AdFilter, AdFilterLikes, AdFilterSeems, AdFilterTies } from "./ad-filte
 import { AdInsert } from "./ad-insert";
 import { AdRegCalls } from "./ad-reg-calls";
 import { AdRegister } from "./ad-register";
-import { AdRegistier } from "./ad-registier";
+import { AdRegistry } from "./ad-registry";
 import { AdToGetID } from "./ad-to-get-id";
 import { AdTyped } from "./ad-typed";
 import { AdUpdate } from "./ad-update";
@@ -140,7 +140,7 @@ export class AdRegModel {
                 }
             }
             let query: AdInsert = {
-                registier: this._reg.registier,
+                registier: this._reg.registry,
                 valueds,
                 toGetID,
             };
@@ -172,7 +172,7 @@ export class AdRegModel {
                 }
             }
             let query: AdUpdate = {
-                registier: this._reg.registier,
+                registier: this._reg.registry,
                 valueds: this.getMutationValueds(),
                 filters: this.getKeyFieldsFilter(),
             };
@@ -191,9 +191,9 @@ export class AdRegModel {
         return new Promise<void>((resolve, reject) => {
             let detailsPromise = new Array<Promise<number>>();
             for (const detail of this._reg.details) {
-                let registier: AdRegistier = {
-                    base: this._reg.registier.base,
-                    registry: detail.setup.module.registry,
+                let registier: AdRegistry = {
+                    base: this._reg.registry.base,
+                    tableHead: detail.setup.module.tableHead,
                 };
                 let deleteDetail: AdDelete = {
                     registier,
@@ -226,7 +226,7 @@ export class AdRegModel {
                 }
             }
             let deleteQuery: AdDelete = {
-                registier: this._reg.registier,
+                registier: this._reg.registry,
                 filters: this.getKeyFieldsFilter(),
             };
             Promise.all(detailsPromise)

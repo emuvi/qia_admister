@@ -1,15 +1,15 @@
 import {
-  QinAsset,
-  QinComboItem,
-  QinComboSet,
-  QinMutants,
-  QinStringSet,
-  QinSuggestionSet,
+    QinAsset,
+    QinComboItem,
+    QinComboSet,
+    QinMutants,
+    QinStringSet,
+    QinSuggestionSet,
 } from "qin_case";
 import { AdField } from "./ad-field";
 import { AdFilter } from "./ad-filter";
 import { AdNames } from "./ad-names";
-import { AdRegistry } from "./ad-registry";
+import { AdTableHead } from "./ad-table-head";
 import { AdValued } from "./ad-valued";
 
 export type AdSetup = {
@@ -33,7 +33,7 @@ export type AdModule = {
     appName: string;
     title: string;
     icon: QinAsset;
-    registry?: AdRegistry;
+    tableHead?: AdTableHead;
 };
 
 function isSameModule(one: AdModule, two: AdModule): boolean {

@@ -76,13 +76,13 @@ export class AdRegLoader {
         addSearchFilters: boolean = true,
         plusFilters: AdValued[] = null
     ): AdSelect {
-        let registier = this._reg.registier;
+        let registier = this._reg.registry;
         let fields = this._reg.model.typeds;
         let joins = this._reg.based.joins;
         if (joins) {
             for (let join of joins) {
                 if (!join.registry) {
-                    join.registry = join.module.registry;
+                    join.registry = join.module.tableHead;
                 }
                 if (!join.ties) {
                     join.ties = AdJoinedTies.LEFT;

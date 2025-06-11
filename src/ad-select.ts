@@ -1,11 +1,11 @@
 import { AdFilter } from "./ad-filter";
 import { AdJoined } from "./ad-joined";
 import { AdOrder } from "./ad-order";
-import { AdRegistier } from "./ad-registier";
+import { AdRegistry } from "./ad-registry";
 import { AdTyped } from "./ad-typed";
 
 export type AdSelect = {
-    registier: AdRegistier;
+    registier: AdRegistry;
     fields?: AdTyped[];
     joins?: AdJoined[];
     filters?: AdFilter[];

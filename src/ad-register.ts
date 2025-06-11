@@ -22,7 +22,7 @@ import { AdRegLoader } from "./ad-reg-loader";
 import { AdRegModel } from "./ad-reg-model";
 import { AdRegSearch } from "./ad-reg-search";
 import { AdRegTable } from "./ad-reg-table";
-import { AdRegistier } from "./ad-registier";
+import { AdRegistry } from "./ad-registry";
 import { AdSelect } from "./ad-select";
 import { AdModule, AdScope, AdSetup, AdTools } from "./ad-tools";
 import { AdTyped } from "./ad-typed";
@@ -68,15 +68,15 @@ export class AdRegister extends QinColumn {
             "," +
             module.title +
             "," +
-            based.registier.base +
+            based.registry.base +
             "," +
-            based.registier.registry.catalog +
+            based.registry.tableHead.catalog +
             "," +
-            based.registier.registry.schema +
+            based.registry.tableHead.schema +
             "," +
-            based.registier.registry.name +
+            based.registry.tableHead.name +
             "," +
-            based.registier.registry.alias;
+            based.registry.tableHead.alias;
         this._model = new AdRegModel(this);
         this._body = new QinStack();
         this._viewSingle = new QinStack();
@@ -182,8 +182,8 @@ export class AdRegister extends QinColumn {
         return this._based;
     }
 
-    public get registier(): AdRegistier {
-        return this._based.registier;
+    public get registry(): AdRegistry {
+        return this._based.registry;
     }
 
     public get expect(): AdExpect {
@@ -231,7 +231,7 @@ export class AdRegister extends QinColumn {
     }
 
     public get dataSource(): string {
-        return this._based.registier.registry.alias ?? this._based.registier.registry.name;
+        return this._based.registry.tableHead.alias ?? this._based.registry.tableHead.name;
     }
 
     public get details(): AdRegDetail[] {
@@ -419,7 +419,7 @@ export class AdRegister extends QinColumn {
         if (!this.regModeEditable) {
             return;
         }
-        let source = joined.alias ?? joined.module.registry?.alias ?? joined.module.registry?.name;
+        let source = joined.alias ?? joined.module.tableHead?.alias ?? joined.module.tableHead?.name;
         let toUpdate: AdField[] = [];
         for (let field of this._model.fields) {
             if (field.fieldSource === source) {
@@ -433,14 +433,14 @@ export class AdRegister extends QinColumn {
         if (joined.registry) {
             Object.assign(registry, joined.registry);
         } else {
-            Object.assign(registry, joined.module.registry);
+            Object.assign(registry, joined.module.tableHead);
         }
         if (joined.alias) {
             registry["alias"] = joined.alias;
         }
-        let registier: AdRegistier = {
-            base: this.based.registier.base,
-            registry,
+        let registier: AdRegistry = {
+            base: this.based.registry.base,
+            tableHead: registry,
         };
         let fields: AdTyped[] = [];
         for (let field of toUpdate) {
@@ -490,7 +490,7 @@ export class AdRegister extends QinColumn {
 
     private applyPermissions() {
         this.qinpel.talk
-            .post("/reg/can", this.registier)
+            .post("/reg/can", this.registry)
             .then((res) => {
                 let permissions: AdRegPermissions = res.data;
                 if (!permissions.all) {

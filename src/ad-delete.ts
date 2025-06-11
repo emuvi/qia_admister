@@ -1,7 +1,7 @@
 import { AdFilter } from "./ad-filter";
-import { AdRegistier } from "./ad-registier";
+import { AdRegistry } from "./ad-registry";
 
 export type AdDelete = {
-    registier: AdRegistier;
+    registier: AdRegistry;
     filters: AdFilter[];
 };

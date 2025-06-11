@@ -1,6 +1,6 @@
+import { AdTableHead } from "./ad-table-head";
+
 export type AdRegistry = {
-    catalog?: string;
-    schema?: string;
-    name: string;
-    alias?: string;
+    base: string;
+    tableHead: AdTableHead;
 };
