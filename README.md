@@ -1,3 +1,3 @@
 # AdMister
 
-AdMister ( Administration Craft ) is a manager with all the common functionalities and the launcher for the user applications of administration tools on the Qinpel platform.
+AdMister ( Administration Profession ) is a manager with all the common functionalities and the launcher of the user applications for the administration profession on the Qinpel platform.
