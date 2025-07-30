@@ -5,8 +5,8 @@ class AdMister extends QinPanel {
     public constructor() {
         super();
         const qinDesk = this.qinpel.window.newDesk(this.qinpel, {
-            addsApps: (manifest) => manifest.group == AdNames.AdMister,
-            addsCfgs: (manifest) => manifest.title == this.qinpel.ours.consts.QIN_BASES,
+            shouldAddApp: (manifest) => manifest.group == AdNames.AdMister,
+            shouldAddCfg: (manifest) => manifest.title == this.qinpel.ours.consts.QIN_BASES,
         });
         this.castedQine().appendChild(qinDesk.getMain());
     }
