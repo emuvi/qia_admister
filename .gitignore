@@ -1,3 +1,4 @@
+.vscode/chrome_debug/
 node_modules/
 __pycache__/
 build/
