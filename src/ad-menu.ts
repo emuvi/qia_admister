@@ -62,7 +62,7 @@ export class AdMenu extends QinColumn {
                 return line;
             }
         }
-        const newLine = new QinTitled({ title });
+        const newLine = new QinTitled({ label: new QinLabel(title) });
         newLine.install(this);
         this._lines.push(newLine);
         return newLine;

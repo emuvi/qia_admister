@@ -1,7 +1,7 @@
-import { QinNature } from "qin_soul";
+import { Nature } from "qin_soul";
 
 export type AdTyped = {
     name: string;
-    type: QinNature;
+    type: Nature;
     alias?: string;
 };

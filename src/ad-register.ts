@@ -385,7 +385,7 @@ export class AdRegister extends QinColumn {
                             join.module.appName,
                             AdTools.newAdSetupOption(join.module, [AdScope.RELATE])
                         );
-                        frame.addWaiter((res) => {
+                        frame.putWaiter((res) => {
                             if (!this.regModeEditable) {
                                 this.qinpel.frame.showError(
                                     "You should not receive a related register on a not editable mode.",
@@ -518,7 +518,7 @@ export class AdRegister extends QinColumn {
     }
 
     private _actShortcuts = (ev: QinEvent) => {
-        if (ev.fromTyping && !ev.isStart) {
+        if (ev.isTyping && !ev.isStart) {
             if (ev.keyPressed === "F2") {
                 this.tryTurnInsert();
                 ev.consumed();

@@ -1,5 +1,6 @@
 import {
     QinAsset,
+    QinBase,
     QinButton,
     QinColumn,
     QinCombo,
@@ -176,12 +177,13 @@ class SearchClause extends QinLine {
         };
     }
 
-    public focus() {
+    public override focus(): QinBase {
         if (!this._qinField.value) {
             this._qinField.focus();
         } else {
             this._qinValue.focus();
         }
+        return this;
     }
 }
 
