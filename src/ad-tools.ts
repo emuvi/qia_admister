@@ -1,11 +1,4 @@
-import {
-    QinAsset,
-    QinComboItem,
-    QinComboSet,
-    QinMutants,
-    QinStringSet,
-    QinSuggestionSet,
-} from "qin_case";
+import { QinAsset, QinComboItem, QinComboSet, QinMutants, QinStringSet, QinSuggestionSet } from "qin_case";
 import { AdField } from "./ad-field";
 import { AdFilter } from "./ad-filter";
 import { AdNames } from "./ad-names";
@@ -20,13 +13,13 @@ export type AdSetup = {
 };
 
 export enum AdScope {
-    ALL = "all",
-    INSERT = "insert",
-    SEARCH = "search",
-    NOTICE = "notice",
-    RELATE = "relate",
-    MUTATE = "mutate",
-    DELETE = "delete",
+    ALL = "ALL",
+    INSERT = "INSERT",
+    SEARCH = "SEARCH",
+    NOTICE = "NOTICE",
+    RELATE = "RELATE",
+    MUTATE = "MUTATE",
+    DELETE = "DELETE",
 }
 
 export type AdModule = {
@@ -40,23 +33,13 @@ function isSameModule(one: AdModule, two: AdModule): boolean {
     return one?.appName == two?.appName && one?.title == two?.title;
 }
 
-function newAdSetupOption(
-    module: AdModule,
-    scopes: AdScope[],
-    filters?: AdFilter[],
-    fixed?: AdValued[]
-) {
+function newAdSetupOption(module: AdModule, scopes: AdScope[], filters?: AdFilter[], fixed?: AdValued[]) {
     let result = {};
     result[AdNames.AdSetup] = newAdSetup(module, scopes, filters, fixed);
     return result;
 }
 
-function newAdSetup(
-    module: AdModule,
-    scopes: AdScope[],
-    filters?: AdFilter[],
-    fixed?: AdValued[]
-): AdSetup {
+function newAdSetup(module: AdModule, scopes: AdScope[], filters?: AdFilter[], fixed?: AdValued[]): AdSetup {
     return {
         module,
         scopes,
@@ -95,12 +78,7 @@ function newAdFieldString(name: string, title: string, maxLength: number): AdFie
     });
 }
 
-function newAdFieldSuggestion(
-    name: string,
-    title: string,
-    maxLength: number,
-    items: string[]
-): AdField {
+function newAdFieldSuggestion(name: string, title: string, maxLength: number, items: string[]): AdField {
     return new AdField({
         key: false,
         name: name,
