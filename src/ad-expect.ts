@@ -14,7 +14,7 @@ export class AdExpect {
         this._waiters = options.waiters;
     }
 
-    public get scopes(): AdScope[] {
+    public get scopeList(): AdScope[] {
         return this._scopeList;
     }
 

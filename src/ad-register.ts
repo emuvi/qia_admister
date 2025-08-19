@@ -479,7 +479,7 @@ export class AdRegister extends QinColumn {
 
     private finish() {
         if (
-            this._expect.scopes.find((scope) => scope === AdScope.ALL || scope === AdScope.INSERT)
+            this._expect.scopeList.find((scope) => scope === AdScope.ALL || scope === AdScope.INSERT)
         ) {
             this.turnMode(AdRegMode.INSERT);
             this._model.clean();
@@ -585,7 +585,7 @@ export class AdRegister extends QinColumn {
 
     public tryTurnNoticeRow(row: number, values: string[]): Promise<AdRegTurningNotice> {
         return new Promise<AdRegTurningNotice>((resolve, reject) => {
-            if (this._expect.scopes.find((scope) => scope === AdScope.RELATE)) {
+            if (this._expect.scopeList.find((scope) => scope === AdScope.RELATE)) {
                 let selected = {};
                 for (let i = 0; i < this._model.fieldList.length; i++) {
                     selected[this._model.fieldList[i].name] = values[i];

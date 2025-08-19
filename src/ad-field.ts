@@ -209,11 +209,7 @@ export class AdField {
     }
 
     public clean() {
-        const newValue = this.isFixedValue()
-            ? this.fixedValue
-            : this.hasDefaultValue()
-            ? this.defaultValue
-            : null;
+        const newValue = this.isFixedValue() ? this.fixedValue : this.defaultValue;
         this.value = newValue;
     }
 

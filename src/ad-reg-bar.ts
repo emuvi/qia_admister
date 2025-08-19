@@ -126,16 +126,16 @@ export class AdRegBar extends QinLine {
         this._qinMutate.install(this);
         this._qinMutate.styleAsPadding(7);
         this._qinMutate.addActionMain((_) =>
-            this._reg.tryTurnMutate().catch((err) => {
-                this._reg.displayError(err, "{qia_admister}(ErrCode-000012)");
-            })
+            this._reg
+                .tryTurnMutate()
+                .catch((err) => this._reg.displayError(err, "{qia_admister}(ErrCode-000012)"))
         );
         this._qinConfirm.install(this);
         this._qinConfirm.styleAsPadding(7);
         this._qinConfirm.addActionMain((_) =>
-            this._reg.tryConfirm().catch((err) => {
-                this._reg.displayError(err, "{qia_admister}(ErrCode-000007)");
-            })
+            this._reg
+                .tryConfirm()
+                .catch((err) => this._reg.displayError(err, "{qia_admister}(ErrCode-000007)"))
         );
         this._qinCancel.install(this);
         this._qinCancel.styleAsPadding(7);
@@ -145,12 +145,8 @@ export class AdRegBar extends QinLine {
         this._qinDelete.addActionMain((_) =>
             this._reg
                 .tryDelete()
-                .then((_) => {
-                    this.qinpel.frame.showInfo(AdApprise.DELETED_REGISTER, "{qia_admister}(ErrCode-000011)");
-                })
-                .catch((err) => {
-                    this._reg.displayError(err, "{qia_admister}(ErrCode-000006)");
-                })
+                .then((_) => this.qinpel.frame.showInfo(AdApprise.DELETED_REGISTER, "{qia_admister}(ErrCode-000011)"))
+                .catch((err) => this._reg.displayError(err, "{qia_admister}(ErrCode-000006)"))
         );
     }
 
