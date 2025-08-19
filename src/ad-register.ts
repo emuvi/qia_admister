@@ -1,9 +1,8 @@
 import { QinAsset, QinBase, QinButton, QinColumn, QinIcon, QinLabel, QinSplitter, QinStack } from "qin_case";
-import { QinAction, QinEvent, Registry, TableHead, Typed, Valued } from "qin_soul";
+import { Filter, FilterLikes, FilterSeems, FilterTies, QinAction, QinEvent, Registry, Select, TableHead, ToSelect, Typed, Valued } from "qin_soul";
 import { AdApprise, AdApprised } from "./ad-apprise";
 import { AdExpect } from "./ad-expect";
 import { AdField } from "./ad-field";
-import { AdFilter, AdFilterLikes, AdFilterSeems, AdFilterTies } from "./ad-filter";
 import { AdJoined } from "./ad-joined";
 import { AdRegBar } from "./ad-reg-bar";
 import { AdRegBased } from "./ad-reg-based";
@@ -51,20 +50,7 @@ export class AdRegister extends QinColumn {
         this._module = module;
         this._expect = expect;
         this._based = based;
-        this._identifier =
-            module.appName +
-            "," +
-            module.title +
-            "," +
-            based.registry.base +
-            "," +
-            based.registry.tableHead.catalog +
-            "," +
-            based.registry.tableHead.schema +
-            "," +
-            based.registry.tableHead.name +
-            "," +
-            based.registry.tableHead.alias;
+        this._identifier = module.appName + "," + module.title + "," + based.registry.base + "," + based.registry.tableHead.catalog + "," + based.registry.tableHead.schema + "," + based.registry.tableHead.name + "," + based.registry.tableHead.alias;
         this._model = new AdRegModel(this);
         this._body = new QinStack();
         this._viewSingle = new QinStack();
@@ -99,36 +85,13 @@ export class AdRegister extends QinColumn {
     }
 
     private initViewSchema() {
-        let sideA = parseInt(
-            this.qinpel.window.loadConfig(
-                this._identifier + "-" + AdRegParams.VIEW_VERTICAL_SIDE_A,
-                "50"
-            )
-        );
-        let sideB = parseInt(
-            this.qinpel.window.loadConfig(
-                this._identifier + "-" + AdRegParams.VIEW_VERTICAL_SIDE_B,
-                "50"
-            )
-        );
+        let sideA = parseInt(this.qinpel.window.loadConfig(this._identifier + "-" + AdRegParams.VIEW_VERTICAL_SIDE_A, "50"));
+        let sideB = parseInt(this.qinpel.window.loadConfig(this._identifier + "-" + AdRegParams.VIEW_VERTICAL_SIDE_B, "50"));
         this._viewVertical.setBalance({ sideA, sideB });
-        sideA = parseInt(
-            this.qinpel.window.loadConfig(
-                this._identifier + "-" + AdRegParams.VIEW_HORIZONTAL_SIDE_A,
-                "50"
-            )
-        );
-        sideB = parseInt(
-            this.qinpel.window.loadConfig(
-                this._identifier + "-" + AdRegParams.VIEW_HORIZONTAL_SIDE_B,
-                "50"
-            )
-        );
+        sideA = parseInt(this.qinpel.window.loadConfig(this._identifier + "-" + AdRegParams.VIEW_HORIZONTAL_SIDE_A, "50"));
+        sideB = parseInt(this.qinpel.window.loadConfig(this._identifier + "-" + AdRegParams.VIEW_HORIZONTAL_SIDE_B, "50"));
         this._viewHorizontal.setBalance({ sideA, sideB });
-        let selectedView = this.qinpel.window.loadConfig(
-            this._identifier + "-" + AdRegParams.VIEW_SELECTED,
-            AdRegParams.VIEW_SELECTED_VERTICAL
-        );
+        let selectedView = this.qinpel.window.loadConfig(this._identifier + "-" + AdRegParams.VIEW_SELECTED, AdRegParams.VIEW_SELECTED_VERTICAL);
         if (selectedView === AdRegParams.VIEW_SELECTED_SINGLE) {
             this.viewSingle();
         } else if (selectedView === AdRegParams.VIEW_SELECTED_HORIZONTAL) {
@@ -141,24 +104,12 @@ export class AdRegister extends QinColumn {
 
     private initSaveBalances() {
         this._viewVertical.addOnChanged((balance) => {
-            this.qinpel.window.saveConfig(
-                this._identifier + "-" + AdRegParams.VIEW_VERTICAL_SIDE_A,
-                balance.sideA.toString()
-            );
-            this.qinpel.window.saveConfig(
-                this._identifier + "-" + AdRegParams.VIEW_VERTICAL_SIDE_B,
-                balance.sideB.toString()
-            );
+            this.qinpel.window.saveConfig(this._identifier + "-" + AdRegParams.VIEW_VERTICAL_SIDE_A, balance.sideA.toString());
+            this.qinpel.window.saveConfig(this._identifier + "-" + AdRegParams.VIEW_VERTICAL_SIDE_B, balance.sideB.toString());
         });
         this._viewHorizontal.addOnChanged((balance) => {
-            this.qinpel.window.saveConfig(
-                this._identifier + "-" + AdRegParams.VIEW_HORIZONTAL_SIDE_A,
-                balance.sideA.toString()
-            );
-            this.qinpel.window.saveConfig(
-                this._identifier + "-" + AdRegParams.VIEW_HORIZONTAL_SIDE_B,
-                balance.sideB.toString()
-            );
+            this.qinpel.window.saveConfig(this._identifier + "-" + AdRegParams.VIEW_HORIZONTAL_SIDE_A, balance.sideA.toString());
+            this.qinpel.window.saveConfig(this._identifier + "-" + AdRegParams.VIEW_HORIZONTAL_SIDE_B, balance.sideB.toString());
         });
     }
 
@@ -264,28 +215,25 @@ export class AdRegister extends QinColumn {
         let action = (_) => {
             this.tryConfirm().then(() => {
                 if (!this.hasRowSelected()) {
-                    this.qinpel.frame.showError(
-                        "You must select a row before show the details of " + detailTitle,
-                        "{qia_admister}(ErrCode-000015)"
-                    );
+                    this.qinpel.frame.showError("You must select a row before show the details of " + detailTitle, "{qia_admister}(ErrCode-000015)");
                     return;
                 }
-                let detailFilters: AdFilter[] = [];
+                let detailFilters: Filter[] = [];
                 let detailFixed: Valued[] = [];
-                if (detail.setup.filters) {
-                    for (let filter of detail.setup.filters) {
+                if (detail.setup.filterList) {
+                    for (let filter of detail.setup.filterList) {
                         if (filter.linked) {
-                            let indexField = this._model.getFieldIndexByName(filter.linked.with);
+                            let indexField = this._model.getFieldIndexByName(filter.linked.upon);
                             let fixedValue = this._selectedValues[indexField];
                             detailFilters.push({
-                                seems: AdFilterSeems.SAME,
-                                likes: AdFilterLikes.EQUALS,
+                                seems: FilterSeems.IS,
+                                likes: FilterLikes.EQUALS,
                                 valued: {
                                     name: filter.linked.name,
-                                    type: this._model.fields[indexField].typed.type,
+                                    type: this._model.fieldList[indexField].typed.type,
                                     data: fixedValue,
                                 },
-                                ties: AdFilterTies.AND,
+                                ties: FilterTies.AND,
                             });
                             detailFixed.push({
                                 name: filter.linked.name,
@@ -301,7 +249,7 @@ export class AdRegister extends QinColumn {
                     detail.setup.module.appName,
                     AdTools.newAdSetupOption(
                         detail.setup.module,
-                        detail.setup.scopes,
+                        detail.setup.scopeList,
                         detailFilters,
                         detailFixed
                     )
@@ -325,10 +273,10 @@ export class AdRegister extends QinColumn {
                 );
             }
         });
-        if (this._expect.fixed) {
+        if (this._expect.fixedList) {
             this.initFixed();
         }
-        if (this._based.joins) {
+        if (this._based.joinList) {
             this.initJoins();
         }
         this.applyPermissions();
@@ -336,13 +284,10 @@ export class AdRegister extends QinColumn {
     }
 
     private initFixed() {
-        for (const fixed of this._expect.fixed) {
+        for (const fixed of this._expect.fixedList) {
             const field = this.model.getFieldByName(fixed.name);
             if (!field) {
-                this.qinpel.frame.showError(
-                    "Could not set the fixed value for field " + fixed.name + ".",
-                    "{qia_admister}(ErrCode-000019)"
-                );
+                this.qinpel.frame.showError("Could not set the fixed value for field " + fixed.name + ".", "{qia_admister}(ErrCode-000019)");
                 continue;
             }
             field.fixedValue = fixed.data;
@@ -350,11 +295,11 @@ export class AdRegister extends QinColumn {
     }
 
     private initJoins() {
-        this._based.joins.forEach((join) => {
-            if (join.filters) {
+        this._based.joinList.forEach((join) => {
+            if (join.filterList) {
                 let allLinkedFields = new Array<AdField>();
                 let allLinkedWith = new Array<string>();
-                join.filters.forEach((filter) => {
+                join.filterList.forEach((filter) => {
                     if (filter.linked) {
                         let linkedField = this._model.getFieldByName(filter.linked.name);
                         linkedField.putOnChanged((_) => {
@@ -363,7 +308,7 @@ export class AdRegister extends QinColumn {
                             }
                         });
                         allLinkedFields.push(linkedField);
-                        allLinkedWith.push(filter.linked.with);
+                        allLinkedWith.push(filter.linked.upon);
                     }
                 });
                 if (allLinkedFields.length > 0) {
@@ -375,10 +320,7 @@ export class AdRegister extends QinColumn {
                         );
                         frame.putWaiter((res) => {
                             if (!this.regModeEditable) {
-                                this.qinpel.frame.showError(
-                                    "You should not receive a related register on a not editable mode.",
-                                    "{qia_admister}(ErrCode-000014)"
-                                );
+                                this.qinpel.frame.showError("You should not receive a related register on a not editable mode.", "{qia_admister}(ErrCode-000014)");
                                 return;
                             }
                             if (!this._enableJoins) {
@@ -409,57 +351,58 @@ export class AdRegister extends QinColumn {
         }
         let source = joined.alias ?? joined.module.tableHead?.alias ?? joined.module.tableHead?.name;
         let toUpdate: AdField[] = [];
-        for (let field of this._model.fields) {
+        for (let field of this._model.fieldList) {
             if (field.fieldSource === source) {
                 toUpdate.push(field);
             }
         }
         if (toUpdate.length == 0) return;
-        let registry: TableHead = {
+        let tableHead: TableHead = {
             name: "",
         };
-        if (joined.registry) {
-            Object.assign(registry, joined.registry);
+        if (joined.tableHead) {
+            Object.assign(tableHead, joined.tableHead);
         } else {
-            Object.assign(registry, joined.module.tableHead);
+            Object.assign(tableHead, joined.module.tableHead);
         }
         if (joined.alias) {
-            registry["alias"] = joined.alias;
+            tableHead["alias"] = joined.alias;
         }
-        let registier: Registry = {
+        let registry: Registry = {
             base: this.based.registry.base,
-            tableHead: registry,
+            tableHead: tableHead,
         };
-        let fields: Typed[] = [];
+        let fieldList: Typed[] = [];
         for (let field of toUpdate) {
-            fields.push(field.typed);
+            fieldList.push(field.typed);
         }
-        let filters: AdFilter[] = [];
-        if (joined.filters) {
-            for (let filter of joined.filters) {
+        let filterList: Filter[] = [];
+        if (joined.filterList) {
+            for (let filter of joined.filterList) {
                 if (filter.linked) {
                     let fromField = this._model.getFieldByName(filter.linked.name);
-                    let thisFilter = {
-                        seems: AdFilterSeems.SAME,
-                        likes: AdFilterLikes.EQUALS,
+                    let thisFilter: Filter = {
+                        seems: FilterSeems.IS,
+                        likes: FilterLikes.EQUALS,
                         valued: {
-                            name: filter.linked.with,
+                            name: filter.linked.upon,
                             type: fromField.typed.type,
                             data: fromField.valued.data,
                         },
-                        ties: AdFilterTies.AND,
+                        ties: FilterTies.AND,
                     };
-                    filters.push(thisFilter);
+                    filterList.push(thisFilter);
                 } else {
-                    filters.push(filter);
+                    filterList.push(filter);
                 }
             }
         }
-        let select: AdSelect = { registier, fields, joins: null, filters, orders: null, limit: 1 };
-        this.qinpel.talk
-            .post("/reg/ask", select)
-            .then((res) => {
-                let rows = this.qinpel.ours.soul.body.getCSVRows(res.data);
+        let select: Select = { tableHead: registry.tableHead, fieldList, filterList, limit: 1 };
+        let toSelect: ToSelect = { base: registry.base, select };
+        this.qinpel.talk.reg
+            .ask(toSelect)
+            .then((data) => {
+                let rows = this.qinpel.ours.soul.body.getCSVRows(data);
                 if (rows.length > 0) {
                     let row = rows[0];
                     for (let i = 0; i < toUpdate.length; i++) {
@@ -471,16 +414,13 @@ export class AdRegister extends QinColumn {
                     }
                 }
             })
-            .catch((err) => {
-                this.displayError(err, "{qia_admister}(ErrCode-000013)");
-            });
+            .catch((err) => this.displayError(err, "{qia_admister}(ErrCode-000013)"));
     }
 
     private applyPermissions() {
-        this.qinpel.talk
-            .post("/reg/can", this.registry)
-            .then((res) => {
-                let permissions: AdRegPermissions = res.data;
+        this.qinpel.talk.reg
+            .can(this.registry)
+            .then((permissions) => {
                 if (!permissions.all) {
                     if (!permissions.insert) {
                         this.restrictInsert();
@@ -502,7 +442,7 @@ export class AdRegister extends QinColumn {
 
     private initShortcuts() {
         this.addAction(this._actShortcuts);
-        this.model.fields.forEach((field) => field.edit.addAction(this._actShortcuts));
+        this.model.fieldList.forEach((field) => field.edit.addAction(this._actShortcuts));
     }
 
     private _actShortcuts = (ev: QinEvent) => {
@@ -639,9 +579,7 @@ export class AdRegister extends QinColumn {
                     this.callDidListeners(AdRegTurn.TURN_NOTICE, turningNotice);
                     resolve(turningNotice);
                 })
-                .catch((err) => {
-                    reject(err);
-                });
+                .catch((err) => reject(err));
         });
     }
 
@@ -649,8 +587,8 @@ export class AdRegister extends QinColumn {
         return new Promise<AdRegTurningNotice>((resolve, reject) => {
             if (this._expect.scopes.find((scope) => scope === AdScope.RELATE)) {
                 let selected = {};
-                for (let i = 0; i < this._model.fields.length; i++) {
-                    selected[this._model.fields[i].name] = values[i];
+                for (let i = 0; i < this._model.fieldList.length; i++) {
+                    selected[this._model.fieldList[i].name] = values[i];
                 }
                 this.qinpel.frame.sendWaiters(selected);
                 this.qinpel.frame.close();
@@ -673,9 +611,7 @@ export class AdRegister extends QinColumn {
                     this.callDidListeners(AdRegTurn.TURN_NOTICE, turningNotice);
                     resolve(turningNotice);
                 })
-                .catch((err) => {
-                    reject(err);
-                });
+                .catch((err) => reject(err));
         });
     }
 
@@ -707,9 +643,7 @@ export class AdRegister extends QinColumn {
                     this.callDidListeners(AdRegTurn.TURN_MODE, turning);
                     resolve(turning);
                 })
-                .catch((err) => {
-                    reject(err);
-                });
+                .catch((err) => reject(err));
         });
     }
 
@@ -754,9 +688,7 @@ export class AdRegister extends QinColumn {
                     this._model.clean();
                     resolve();
                 })
-                .catch((err) => {
-                    reject(err);
-                });
+                .catch((err) => reject(err));
         });
     }
 
@@ -775,7 +707,7 @@ export class AdRegister extends QinColumn {
 
     public refreshSelected(row: any[]) {
         if (this._regMode == AdRegMode.NOTICE) {
-            const fields = this._model.fields;
+            const fields = this._model.fieldList;
             this._selectedValues = Array(row.length);
             for (let i = 0; i < row.length; i++) {
                 fields[i].value = row[i];
@@ -905,9 +837,7 @@ export class AdRegister extends QinColumn {
                     this.tryTurnMode(AdRegMode.NOTICE);
                     resolve();
                 })
-                .catch((err) => {
-                    reject(err);
-                });
+                .catch((err) => reject(err));
         });
     }
 
@@ -1035,10 +965,7 @@ export class AdRegister extends QinColumn {
         this._table.reDisplay();
         this._regView = AdRegView.VERTICAL;
         this.callDidListeners(AdRegTurn.TURN_VIEW, { newValue: this._regView });
-        this.qinpel.window.saveConfig(
-            this._identifier + "-" + AdRegParams.VIEW_SELECTED,
-            AdRegParams.VIEW_SELECTED_VERTICAL
-        );
+        this.qinpel.window.saveConfig(this._identifier + "-" + AdRegParams.VIEW_SELECTED, AdRegParams.VIEW_SELECTED_VERTICAL);
     }
 
     public viewHorizontal() {
@@ -1093,8 +1020,8 @@ export class AdRegister extends QinColumn {
     }
 
     public focusFirstField() {
-        if (this.model.fields.length > 0) {
-            this.model.fields[0].focus();
+        if (this.model.fieldList.length > 0) {
+            this.model.fieldList[0].focus();
         }
     }
 
@@ -1112,14 +1039,6 @@ export class AdRegister extends QinColumn {
         this._table.focus();
     }
 }
-
-export type AdRegPermissions = {
-    all: boolean;
-    insert: boolean;
-    select: boolean;
-    update: boolean;
-    delete: boolean;
-};
 
 export enum AdRegMode {
     INSERT = "INSERT",

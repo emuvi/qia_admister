@@ -1,13 +1,4 @@
-import {
-  QinBase,
-  QinButton,
-  QinColumn,
-  Qine,
-  QinIcon,
-  QinLabel,
-  QinLine,
-  QinTitled,
-} from "qin_case";
+import { QinBase, QinButton, QinColumn, Qine, QinIcon, QinLabel, QinLine, QinTitled } from "qin_case";
 import { QinGrandeur } from "qin_soul";
 import { AdExpect } from "./ad-expect";
 import { AdNames } from "./ad-names";
@@ -25,13 +16,13 @@ export type AdMenuItem = {
 export class AdMenu extends QinColumn {
     private _lines = new Array<QinTitled>();
 
-    constructor(items: AdMenuItem[]) {
+    constructor(menuItemList: AdMenuItem[]) {
         super();
-        for (const item of items) {
-            const line = this.getLine(item.group);
+        for (const menuItem of menuItemList) {
+            const line = this.getLine(menuItem.group);
             const button = new QinButton({
-                icon: new QinIcon(item.module.icon, QinGrandeur.MEDIUM),
-                label: new QinLabel(item.module.title),
+                icon: new QinIcon(menuItem.module.icon, QinGrandeur.MEDIUM),
+                label: new QinLabel(menuItem.module.title),
             });
             button.styleAsMargin(3);
             button.styleAsPadding(9);
@@ -39,9 +30,9 @@ export class AdMenu extends QinColumn {
             button.putAsColumn();
             button.addActionMain((_) => {
                 this.qinpel.window.newFrame(
-                    item.module.title,
-                    item.module.appName,
-                    AdTools.newAdSetupOption(item.module, [AdScope.ALL])
+                    menuItem.module.title,
+                    menuItem.module.appName,
+                    AdTools.newAdSetupOption(menuItem.module, [AdScope.ALL])
                 );
             });
             line.put(button);
@@ -69,23 +60,23 @@ export class AdMenu extends QinColumn {
     }
 }
 
-export function adMenuStartUp(menus: AdMenuItem[]): QinBase {
+export function adMenuStartUp(menuItemList: AdMenuItem[]): QinBase {
     const adSetup = Qine.qinpel.frame.getOption(AdNames.AdSetup) as AdSetup;
     if (adSetup && adSetup.module) {
-        for (const menu of menus) {
-            if (AdTools.isSameModule(menu.module, adSetup.module)) {
+        for (const menuItem of menuItemList) {
+            if (AdTools.isSameModule(menuItem.module, adSetup.module)) {
                 let expect = new AdExpect({
-                    scopes: adSetup.scopes,
-                    filters: adSetup.filters,
-                    fixed: adSetup.fixed,
+                    scopeList: adSetup.scopeList,
+                    filterList: adSetup.filterList,
+                    fixedList: adSetup.fixedList,
                 });
-                if (menu.register) {
-                    return new menu.register(menu.module, expect);
+                if (menuItem.register) {
+                    return new menuItem.register(menuItem.module, expect);
                 } else {
                     throw new Error("No menu action defined");
                 }
             }
         }
     }
-    return new AdMenu(menus);
+    return new AdMenu(menuItemList);
 }

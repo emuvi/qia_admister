@@ -1,14 +1,13 @@
 import { QinAsset, QinComboItem, QinComboSet, QinMutants, QinStringSet, QinSuggestionSet } from "qin_case";
-import { TableHead, Valued } from "qin_soul";
+import { Filter, TableHead, Valued } from "qin_soul";
 import { AdField } from "./ad-field";
-import { AdFilter } from "./ad-filter";
 import { AdNames } from "./ad-names";
 
 export type AdSetup = {
     module: AdModule;
-    scopes: AdScope[];
-    filters?: AdFilter[];
-    fixed?: Valued[];
+    scopeList: AdScope[];
+    filterList?: Filter[];
+    fixedList?: Valued[];
 };
 
 export enum AdScope {
@@ -28,30 +27,30 @@ export type AdModule = {
     tableHead?: TableHead;
 };
 
-function isSameModule(one: AdModule, two: AdModule): boolean {
-    return one?.appName == two?.appName && one?.title == two?.title;
+function isSameModule(moduleA: AdModule, moduleB: AdModule): boolean {
+    return moduleA?.appName == moduleB?.appName && moduleA?.title == moduleB?.title;
 }
 
-function newAdSetupOption(module: AdModule, scopes: AdScope[], filters?: AdFilter[], fixed?: Valued[]) {
+function newAdSetupOption(module: AdModule, scopeList: AdScope[], filterList?: Filter[], fixedList?: Valued[]) {
     let result = {};
-    result[AdNames.AdSetup] = newAdSetup(module, scopes, filters, fixed);
+    result[AdNames.AdSetup] = newAdSetup(module, scopeList, filterList, fixedList);
     return result;
 }
 
-function newAdSetup(module: AdModule, scopes: AdScope[], filters?: AdFilter[], fixed?: Valued[]): AdSetup {
+function newAdSetup(module: AdModule, scopeList: AdScope[], filterList?: Filter[], fixedList?: Valued[]): AdSetup {
     return {
         module,
-        scopes,
-        filters,
-        fixed,
+        scopeList,
+        filterList,
+        fixedList,
     };
 }
 
 function newAdFieldInteger(name: string, title: string): AdField {
     return new AdField({
         key: false,
-        name: name,
-        title: title,
+        name,
+        title,
         kind: QinMutants.INTEGER,
     });
 }
@@ -59,8 +58,8 @@ function newAdFieldInteger(name: string, title: string): AdField {
 function newAdFieldNumeric(name: string, title: string): AdField {
     return new AdField({
         key: false,
-        name: name,
-        title: title,
+        name,
+        title,
         kind: QinMutants.NUMERIC,
     });
 }
@@ -68,11 +67,11 @@ function newAdFieldNumeric(name: string, title: string): AdField {
 function newAdFieldString(name: string, title: string, maxLength: number): AdField {
     return new AdField({
         key: false,
-        name: name,
-        title: title,
+        name,
+        title,
         kind: QinMutants.STRING,
         options: {
-            maxLength: maxLength,
+            maxLength,
         } as QinStringSet,
     });
 }
@@ -93,8 +92,8 @@ function newAdFieldSuggestion(name: string, title: string, maxLength: number, it
 function newAdFieldDate(name: string, title: string): AdField {
     return new AdField({
         key: false,
-        name: name,
-        title: title,
+        name,
+        title,
         kind: QinMutants.DATE,
     });
 }
@@ -102,11 +101,11 @@ function newAdFieldDate(name: string, title: string): AdField {
 function newAdFieldCombo(name: string, title: string, items: QinComboItem[]): AdField {
     return new AdField({
         key: false,
-        name: name,
-        title: title,
+        name,
+        title,
         kind: QinMutants.COMBO,
         options: {
-            items: items,
+            items,
         } as QinComboSet,
     });
 }

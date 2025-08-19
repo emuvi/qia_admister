@@ -1,19 +1,10 @@
-import { AdFilter } from "./ad-filter";
-import { TableHead } from "qin_soul";
+import { Filter, JoinTies, TableHead } from "qin_soul";
 import { AdModule } from "./ad-tools";
 
 export type AdJoined = {
     module: AdModule;
-    registry?: TableHead;
+    tableHead?: TableHead;
     alias?: string;
-    filters?: AdFilter[];
-    ties?: AdJoinedTies;
+    filterList?: Filter[];
+    ties?: JoinTies;
 };
-
-export enum AdJoinedTies {
-    INNER = "INNER",
-    LEFT = "LEFT",
-    RIGHT = "RIGHT",
-    FULL = "FULL",
-    CROSS = "CROSS",
-}

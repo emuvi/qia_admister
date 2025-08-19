@@ -1,6 +1,5 @@
 export enum AdNames {
     AdSetup = "AdSetup",
-
     AdBoard = "AdBoard",
     AdMister = "AdMister",
     AdPeople = "AdPeople",

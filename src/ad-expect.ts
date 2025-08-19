@@ -1,37 +1,29 @@
-import { QinWaiters, Valued } from "qin_soul";
-import { AdFilter } from "./ad-filter";
-import { AdPrepare } from "./ad-prepare";
+import { Filter, QinWaiters, Valued } from "qin_soul";
 import { AdScope } from "./ad-tools";
 
 export class AdExpect {
-    private _scopes: AdScope[];
-    private _filters: AdFilter[];
-    private _fixed: Valued[];
-    private _prepare: AdPrepare[];
+    private _scopeList: AdScope[];
+    private _filterList: Filter[];
+    private _fixedList: Valued[];
     private _waiters: QinWaiters<any>;
 
     public constructor(options: AdExpectSet) {
-        this._scopes = options.scopes;
-        this._filters = options.filters;
-        this._fixed = options.fixed;
-        this._prepare = options.prepare;
+        this._scopeList = options.scopeList;
+        this._filterList = options.filterList;
+        this._fixedList = options.fixedList;
         this._waiters = options.waiters;
     }
 
     public get scopes(): AdScope[] {
-        return this._scopes;
+        return this._scopeList;
     }
 
-    public get filters(): AdFilter[] {
-        return this._filters;
+    public get filterList(): Filter[] {
+        return this._filterList;
     }
 
-    public get fixed(): Valued[] {
-        return this._fixed;
-    }
-
-    public get prepare(): AdPrepare[] {
-        return this._prepare;
+    public get fixedList(): Valued[] {
+        return this._fixedList;
     }
 
     public get waiters(): QinWaiters<any> {
@@ -39,9 +31,9 @@ export class AdExpect {
     }
 
     private replaceAllScopeWithEachOne() {
-        if (this._scopes.findIndex((s) => s == AdScope.ALL) > -1) {
-            let hasRelate = this._scopes.findIndex((s) => s == AdScope.RELATE) > -1;
-            this._scopes = [
+        if (this._scopeList.findIndex((s) => s == AdScope.ALL) > -1) {
+            let hasRelate = this._scopeList.findIndex((s) => s == AdScope.RELATE) > -1;
+            this._scopeList = [
                 AdScope.INSERT,
                 AdScope.SEARCH,
                 AdScope.NOTICE,
@@ -49,40 +41,39 @@ export class AdExpect {
                 AdScope.DELETE,
             ];
             if (hasRelate) {
-                this._scopes.push(AdScope.RELATE);
+                this._scopeList.push(AdScope.RELATE);
             }
         }
     }
 
     public restrictInsert() {
         this.replaceAllScopeWithEachOne();
-        this._scopes = this._scopes.filter((s) => s != AdScope.INSERT);
+        this._scopeList = this._scopeList.filter((s) => s != AdScope.INSERT);
     }
 
     public restrictSelect() {
         this.replaceAllScopeWithEachOne();
-        this._scopes = this._scopes.filter((s) => s != AdScope.SEARCH && s != AdScope.NOTICE);
+        this._scopeList = this._scopeList.filter((s) => s != AdScope.SEARCH && s != AdScope.NOTICE);
     }
 
     public restrictUpdate() {
         this.replaceAllScopeWithEachOne();
-        this._scopes = this._scopes.filter((s) => s != AdScope.MUTATE);
+        this._scopeList = this._scopeList.filter((s) => s != AdScope.MUTATE);
     }
 
     public restrictDelete() {
         this.replaceAllScopeWithEachOne();
-        this._scopes = this._scopes.filter((s) => s != AdScope.DELETE);
+        this._scopeList = this._scopeList.filter((s) => s != AdScope.DELETE);
     }
 
     public hasScope(scope: AdScope): boolean {
-        return this._scopes.findIndex((s) => s == AdScope.ALL || s == scope) > -1;
+        return this._scopeList.findIndex((s) => s == AdScope.ALL || s == scope) > -1;
     }
 }
 
 export type AdExpectSet = {
-    scopes: AdScope[];
-    filters?: AdFilter[];
-    fixed?: Valued[];
-    prepare?: AdPrepare[];
+    scopeList: AdScope[];
+    filterList?: Filter[];
+    fixedList?: Valued[];
     waiters?: QinWaiters<any>;
 };

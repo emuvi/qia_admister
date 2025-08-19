@@ -1,12 +1,4 @@
-import {
-  QinAsset,
-  QinButton,
-  QinDivider,
-  QinIcon,
-  QinIconPick,
-  QinLine,
-  QinPopup,
-} from "qin_case";
+import { QinAsset, QinButton, QinDivider, QinIcon, QinIconPick, QinLine, QinPopup } from "qin_case";
 import { AdApprise } from "./ad-apprise";
 import { AdRegMode, AdRegTurn, AdRegTurningMode, AdRegister } from "./ad-register";
 import { AdScope } from "./ad-tools";
@@ -14,24 +6,13 @@ import { AdScope } from "./ad-tools";
 export class AdRegBar extends QinLine {
     private _reg: AdRegister;
 
-    private _qinMenu = new QinButton({
-        icon: new QinIcon(QinAsset.FaceMenuLines),
-    });
-    private _qinMenuViewSingle = new QinButton({
-        icon: new QinIcon(QinAsset.FaceSplitNotView),
-    });
-    private _qinMenuViewVertical = new QinButton({
-        icon: new QinIcon(QinAsset.FaceSplitViewVertical),
-    });
-    private _qinMenuViewHorizontal = new QinButton({
-        icon: new QinIcon(QinAsset.FaceSplitViewHorizontal),
-    });
-    private _qinMenuFocusBody = new QinButton({
-        icon: new QinIcon(QinAsset.FaceListView),
-    });
-    private _qinMenuFocusTable = new QinButton({
-        icon: new QinIcon(QinAsset.FaceGridView),
-    });
+    private _qinMenu = new QinButton({icon: new QinIcon(QinAsset.FaceMenuLines)});
+    private _qinMenuViewSingle = new QinButton({icon: new QinIcon(QinAsset.FaceSplitNotView)});
+    private _qinMenuViewVertical = new QinButton({icon: new QinIcon(QinAsset.FaceSplitViewVertical)});
+    private _qinMenuViewHorizontal = new QinButton({icon: new QinIcon(QinAsset.FaceSplitViewHorizontal)});
+    private _qinMenuFocusBody = new QinButton({icon: new QinIcon(QinAsset.FaceListView)});
+    private _qinMenuFocusTable = new QinButton({icon: new QinIcon(QinAsset.FaceGridView)});
+
     private _qinMenuBody = new QinLine({
         items: [
             this._qinMenuViewSingle,
@@ -50,35 +31,17 @@ export class AdRegBar extends QinLine {
 
     private _qinMode = new QinIconPick({ readOnly: true });
 
-    private _qinRefresh = new QinButton({
-        icon: new QinIcon(QinAsset.FaceSync),
-    });
+    private _qinRefresh = new QinButton({icon: new QinIcon(QinAsset.FaceSync)});
 
-    private _qinGoFirst = new QinButton({
-        icon: new QinIcon(QinAsset.FaceRUpChevronPush),
-    });
-    private _qinGoPrior = new QinButton({
-        icon: new QinIcon(QinAsset.FaceRLeftChevronPush),
-    });
-    private _qinGoNext = new QinButton({
-        icon: new QinIcon(QinAsset.FaceRRightChevronPush),
-    });
-    private _qinGoLast = new QinButton({
-        icon: new QinIcon(QinAsset.FaceRDownChevronPush),
-    });
+    private _qinGoFirst = new QinButton({icon: new QinIcon(QinAsset.FaceRUpChevronPush)});
+    private _qinGoPrior = new QinButton({icon: new QinIcon(QinAsset.FaceRLeftChevronPush)});
+    private _qinGoNext = new QinButton({icon: new QinIcon(QinAsset.FaceRRightChevronPush)});
+    private _qinGoLast = new QinButton({icon: new QinIcon(QinAsset.FaceRDownChevronPush)});
 
-    private _qinMutate = new QinButton({
-        icon: new QinIcon(QinAsset.FacePencil),
-    });
-    private _qinConfirm = new QinButton({
-        icon: new QinIcon(QinAsset.FaceConfirm),
-    });
-    private _qinCancel = new QinButton({
-        icon: new QinIcon(QinAsset.FaceCancel),
-    });
-    private _qinDelete = new QinButton({
-        icon: new QinIcon(QinAsset.FaceTrash),
-    });
+    private _qinMutate = new QinButton({icon: new QinIcon(QinAsset.FacePencil)});
+    private _qinConfirm = new QinButton({icon: new QinIcon(QinAsset.FaceConfirm)});
+    private _qinCancel = new QinButton({icon: new QinIcon(QinAsset.FaceCancel)});
+    private _qinDelete = new QinButton({icon: new QinIcon(QinAsset.FaceTrash)});
 
     public constructor(register: AdRegister) {
         super();
@@ -183,10 +146,7 @@ export class AdRegBar extends QinLine {
             this._reg
                 .tryDelete()
                 .then((_) => {
-                    this.qinpel.frame.showInfo(
-                        AdApprise.DELETED_REGISTER,
-                        "{qia_admister}(ErrCode-000011)"
-                    );
+                    this.qinpel.frame.showInfo(AdApprise.DELETED_REGISTER, "{qia_admister}(ErrCode-000011)");
                 })
                 .catch((err) => {
                     this._reg.displayError(err, "{qia_admister}(ErrCode-000006)");

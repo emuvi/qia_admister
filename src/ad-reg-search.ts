@@ -1,18 +1,7 @@
-import {
-    QinAsset,
-    QinBase,
-    QinButton,
-    QinColumn,
-    QinCombo,
-    QinComboItem,
-    QinIcon,
-    QinLine,
-    QinScroll,
-    QinString,
-} from "qin_case";
+import { QinAsset, QinBase, QinButton, QinColumn, QinCombo, QinComboItem, QinIcon, QinLine, QinScroll, QinString } from "qin_case";
 import { AdField } from "./ad-field";
-import { AdFilter, AdFilterLikes, AdFilterSeems, AdFilterTies } from "./ad-filter";
 import { AdRegister } from "./ad-register";
+import { Filter, FilterLikes, FilterSeems, FilterTies } from "qin_soul";
 
 export class AdRegSearch extends QinScroll {
     private _reg: AdRegister;
@@ -49,7 +38,7 @@ export class AdRegSearch extends QinScroll {
 
     public addClause(after: SearchClause) {
         const clause = new SearchClause(this);
-        this._reg.model.fields.forEach((field) => {
+        this._reg.model.fieldList.forEach((field) => {
             clause.addField({
                 title: field.title,
                 value: field.name,
@@ -79,8 +68,8 @@ export class AdRegSearch extends QinScroll {
         });
     }
 
-    public getFilters(): AdFilter[] {
-        let results: AdFilter[] = null;
+    public getFilters(): Filter[] {
+        let results: Filter[] = null;
         this._clauses.forEach((clause) => {
             let filter = clause.getFilter();
             if (filter) {
@@ -105,11 +94,11 @@ export class AdRegSearch extends QinScroll {
 class SearchClause extends QinLine {
     private _dad: AdRegSearch;
 
-    private _qinSame = new SearchSame();
+    private _qinSame = new SearchSeems();
     private _qinField = new QinCombo();
     private _qinLikes = new SearchCondition();
     private _qinValue = new QinString();
-    private _qinTies = new SearchTie();
+    private _qinTies = new SearchTies();
 
     private _qinAdd = new QinButton({ icon: new QinIcon(QinAsset.FacePlus) });
     private _qinDel = new QinButton({ icon: new QinIcon(QinAsset.FaceMinus) });
@@ -147,13 +136,13 @@ class SearchClause extends QinLine {
     }
 
     public clean() {
-        this._qinSame.value = AdFilterSeems.SAME;
-        this._qinLikes.value = AdFilterLikes.EQUALS;
+        this._qinSame.value = FilterSeems.IS;
+        this._qinLikes.value = FilterLikes.EQUALS;
         this._qinValue.value = null;
-        this._qinTies.value = AdFilterTies.AND;
+        this._qinTies.value = FilterTies.AND;
     }
 
-    public getFilter(): AdFilter {
+    public getFilter(): Filter {
         let fieldName = this._qinField.value;
         if (!fieldName) {
             return null;
@@ -166,14 +155,14 @@ class SearchClause extends QinLine {
             return null;
         }
         return {
-            seems: this._qinSame.value as AdFilterSeems,
-            likes: this._qinLikes.value as AdFilterLikes,
+            seems: this._qinSame.value as FilterSeems,
+            likes: this._qinLikes.value as FilterLikes,
             valued: {
                 name: field.typed.alias || field.typed.name,
                 type: field.typed.type,
                 data: this._qinValue.value,
             },
-            ties: this._qinTies.value as AdFilterTies,
+            ties: this._qinTies.value as FilterTies,
         };
     }
 
@@ -187,11 +176,11 @@ class SearchClause extends QinLine {
     }
 }
 
-class SearchSame extends QinCombo {
+class SearchSeems extends QinCombo {
     public constructor() {
         super();
-        this.addItem({ title: "==", value: AdFilterSeems.SAME });
-        this.addItem({ title: "!=", value: AdFilterSeems.DIVERSE });
+        this.addItem({ title: "==", value: FilterSeems.IS });
+        this.addItem({ title: "!=", value: FilterSeems.NOT });
         this.styleAsMaxWidth(64);
     }
 }
@@ -199,23 +188,23 @@ class SearchSame extends QinCombo {
 class SearchCondition extends QinCombo {
     public constructor() {
         super();
-        this.addItem({ title: "=", value: AdFilterLikes.EQUALS });
-        this.addItem({ title: ">", value: AdFilterLikes.BIGGER });
-        this.addItem({ title: "<", value: AdFilterLikes.LESSER });
-        this.addItem({ title: ">=", value: AdFilterLikes.BIGGER_EQUALS });
-        this.addItem({ title: "<=", value: AdFilterLikes.LESSER_EQUALS });
-        this.addItem({ title: "$_", value: AdFilterLikes.STARTS_WITH });
-        this.addItem({ title: "_$", value: AdFilterLikes.ENDS_WITH });
-        this.addItem({ title: "_$_", value: AdFilterLikes.CONTAINS, selected: true });
+        this.addItem({ title: "=", value: FilterLikes.EQUALS });
+        this.addItem({ title: ">", value: FilterLikes.BIGGER });
+        this.addItem({ title: "<", value: FilterLikes.LESSER });
+        this.addItem({ title: ">=", value: FilterLikes.BIGGER_EQUALS });
+        this.addItem({ title: "<=", value: FilterLikes.LESSER_EQUALS });
+        this.addItem({ title: "$_", value: FilterLikes.STARTS_WITH });
+        this.addItem({ title: "_$", value: FilterLikes.ENDS_WITH });
+        this.addItem({ title: "_$_", value: FilterLikes.CONTAINS, selected: true });
         this.styleAsMaxWidth(64);
     }
 }
 
-class SearchTie extends QinCombo {
+class SearchTies extends QinCombo {
     public constructor() {
         super();
-        this.addItem({ title: "&&", value: AdFilterTies.AND });
-        this.addItem({ title: "||", value: AdFilterTies.OR });
+        this.addItem({ title: "&&", value: FilterTies.AND });
+        this.addItem({ title: "||", value: FilterTies.OR });
         this.styleAsMaxWidth(64);
     }
 }

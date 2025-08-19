@@ -1,7 +1,6 @@
-import { Registry, Typed, ToGetID, Valued } from "qin_soul";
+import { Registry, Typed, ToGetID, Valued, FilterSeems, FilterLikes, FilterTies, Filter } from "qin_soul";
 import { AdDelete } from "./ad-delete";
 import { AdField } from "./ad-field";
-import { AdFilter, AdFilterLikes, AdFilterSeems, AdFilterTies } from "./ad-filter";
 import { AdInsert } from "./ad-insert";
 import { AdRegCalls } from "./ad-reg-calls";
 import { AdRegister } from "./ad-register";
@@ -9,33 +8,33 @@ import { AdUpdate } from "./ad-update";
 
 export class AdRegModel {
     private _reg: AdRegister;
-    private _fields: AdField[] = [];
-    private _typeds: Typed[] = null;
+    private _fieldList: AdField[] = [];
+    private _typedList: Typed[] = null;
 
     public constructor(register: AdRegister) {
         this._reg = register;
     }
 
-    public get fields(): AdField[] {
-        return this._fields;
+    public get fieldList(): AdField[] {
+        return this._fieldList;
     }
 
-    public get typeds(): Typed[] {
-        if (this._typeds == null) {
-            this._typeds = [];
-            for (let field of this._fields) {
-                this._typeds.push(field.typed);
+    public get typedList(): Typed[] {
+        if (this._typedList == null) {
+            this._typedList = [];
+            for (let field of this._fieldList) {
+                this._typedList.push(field.typed);
             }
         }
-        return this._typeds;
+        return this._typedList;
     }
 
     public addField(field: AdField) {
-        this._fields.push(field);
+        this._fieldList.push(field);
     }
 
     public getFieldByName(name: string): AdField {
-        for (let field of this._fields) {
+        for (let field of this._fieldList) {
             if (field.name === name) {
                 return field;
             }
@@ -44,8 +43,8 @@ export class AdRegModel {
     }
 
     public getFieldIndexByName(name: string): number {
-        for (let i = 0; i < this._fields.length; i++) {
-            if (this._fields[i].name === name) {
+        for (let i = 0; i < this._fieldList.length; i++) {
+            if (this._fieldList[i].name === name) {
                 return i;
             }
         }
@@ -53,11 +52,11 @@ export class AdRegModel {
     }
 
     public setValue(index: number, value: any) {
-        this._fields[index].value = value;
+        this._fieldList[index].value = value;
     }
 
     public getValue(index: number): any {
-        return this._fields[index].value;
+        return this._fieldList[index].value;
     }
 
     public setValues(values: any[]) {
@@ -68,26 +67,26 @@ export class AdRegModel {
 
     public getValues(): any[] {
         let result = [];
-        for (const field of this._fields) {
+        for (const field of this._fieldList) {
             result.push(field.value);
         }
         return result;
     }
 
     public clean() {
-        for (let field of this._fields) {
+        for (let field of this._fieldList) {
             field.clean();
         }
     }
 
     public turnReadOnly() {
-        for (let field of this._fields) {
+        for (let field of this._fieldList) {
             field.turnReadOnly();
         }
     }
 
     public turnEditable() {
-        for (let field of this._fields) {
+        for (let field of this._fieldList) {
             if (!field.readOnly) {
                 field.turnEditable();
             } else {
@@ -98,7 +97,7 @@ export class AdRegModel {
 
     public hasMutations(): string[] {
         let result: Array<string> = null;
-        for (let field of this._fields) {
+        for (let field of this._fieldList) {
             if (field.hasMutations()) {
                 if (result == null) {
                     result = [];
@@ -110,27 +109,27 @@ export class AdRegModel {
     }
 
     public undoMutations() {
-        for (let field of this._fields) {
+        for (let field of this._fieldList) {
             field.undoMutations();
         }
     }
 
     public async insert(): Promise<AdRegKeys> {
         return new Promise<AdRegKeys>((resolve, reject) => {
-            let valueds = new Array<Valued>();
-            let regKeys = new Array<Valued>();
+            let valuedList = new Array<Valued>();
+            let regKeyList = new Array<Valued>();
             let toGetID: ToGetID = {
                 name: null,
                 filter: null
             };
-            for (let field of this._fields) {
+            for (let field of this._fieldList) {
                 let valued = field.valued;
                 if (valued.name.indexOf(".") === -1) {
                     if (valued.data || field.key) {
-                        valueds.push(valued);
+                        valuedList.push(valued);
                     }
                     if (field.key) {
-                        regKeys.push(valued);
+                        regKeyList.push(valued);
                         if (!valued.data) {
                             toGetID.name = field.name;
                         } else {
@@ -140,21 +139,21 @@ export class AdRegModel {
                 }
             }
             let query: AdInsert = {
-                registier: this._reg.registry,
-                valueds,
+                registry: this._reg.registry,
+                valuedList,
                 toGetID,
             };
             AdRegCalls.insert(query)
                 .then((id) => {
                     if (toGetID && toGetID.name) {
-                        for (let valued of regKeys) {
+                        for (let valued of regKeyList) {
                             if (valued.name === toGetID.name) {
                                 valued.data = id;
                                 break;
                             }
                         }
                     }
-                    resolve(regKeys);
+                    resolve(regKeyList);
                 })
                 .catch((err) => reject(err));
         });
@@ -162,26 +161,23 @@ export class AdRegModel {
 
     public async update(): Promise<AdRegKeys> {
         return new Promise<AdRegKeys>((resolve, reject) => {
-            let valueds = new Array<Valued>();
-            let regKeys = new Array<Valued>();
-            for (let field of this._fields) {
-                let valued = field.valued;
-                valueds.push(valued);
+            let regKeyList = new Array<Valued>();
+            for (let field of this._fieldList) {
                 if (field.key) {
-                    regKeys.push(valued);
+                    regKeyList.push(field.valued);
                 }
             }
             let query: AdUpdate = {
-                registier: this._reg.registry,
-                valueds: this.getMutationValueds(),
-                filters: this.getKeyFieldsFilter(),
+                registry: this._reg.registry,
+                valuedList: this.getMutationValuedList(),
+                filterList: this.getKeyFieldsFilter(),
             };
             AdRegCalls.update(query)
                 .then((_) => {
-                    for (let field of this._fields) {
+                    for (let field of this._fieldList) {
                         field.saved();
                     }
-                    resolve(regKeys);
+                    resolve(regKeyList);
                 })
                 .catch((err) => reject(err));
         });
@@ -191,43 +187,41 @@ export class AdRegModel {
         return new Promise<void>((resolve, reject) => {
             let detailsPromise = new Array<Promise<number>>();
             for (const detail of this._reg.details) {
-                let registier: Registry = {
+                let registry: Registry = {
                     base: this._reg.registry.base,
                     tableHead: detail.setup.module.tableHead,
                 };
                 let deleteDetail: AdDelete = {
-                    registier,
-                    filters: [],
+                    registry: registry,
+                    filterList: [],
                 };
-                if (detail.setup.filters) {
-                    for (const filter of detail.setup.filters) {
+                if (detail.setup.filterList) {
+                    for (const filter of detail.setup.filterList) {
                         if (filter.linked) {
-                            let indexField = this._reg.model.getFieldIndexByName(
-                                filter.linked.with
-                            );
+                            let indexField = this._reg.model.getFieldIndexByName(filter.linked.upon);
                             let fixedValue = this._reg.selectedValues[indexField];
-                            deleteDetail.filters.push({
-                                seems: AdFilterSeems.SAME,
-                                likes: AdFilterLikes.EQUALS,
+                            deleteDetail.filterList.push({
+                                seems: FilterSeems.IS,
+                                likes: FilterLikes.EQUALS,
                                 valued: {
                                     name: filter.linked.name,
-                                    type: this._reg.model.fields[indexField].typed.type,
+                                    type: this._reg.model.fieldList[indexField].typed.type,
                                     data: fixedValue,
                                 },
-                                ties: AdFilterTies.AND,
+                                ties: FilterTies.AND,
                             });
                         } else {
-                            deleteDetail.filters.push(filter);
+                            deleteDetail.filterList.push(filter);
                         }
                     }
                 }
-                if (deleteDetail.filters.length > 0) {
+                if (deleteDetail.filterList.length > 0) {
                     detailsPromise.push(AdRegCalls.delete(deleteDetail));
                 }
             }
             let deleteQuery: AdDelete = {
-                registier: this._reg.registry,
-                filters: this.getKeyFieldsFilter(),
+                registry: this._reg.registry,
+                filterList: this.getKeyFieldsFilter(),
             };
             Promise.all(detailsPromise)
                 .then((_) => {
@@ -242,9 +236,9 @@ export class AdRegModel {
         });
     }
 
-    private getMutationValueds(): Valued[] {
+    private getMutationValuedList(): Valued[] {
         let result = [];
-        for (let field of this._fields) {
+        for (let field of this._fieldList) {
             if (field.hasMutations() && !field.key) {
                 result.push(field.valued);
             }
@@ -252,15 +246,15 @@ export class AdRegModel {
         return result;
     }
 
-    private getKeyFieldsFilter(): AdFilter[] {
-        let result: AdFilter[] = [];
-        for (let field of this._fields) {
+    private getKeyFieldsFilter(): Filter[] {
+        let result: Filter[] = [];
+        for (let field of this._fieldList) {
             if (field.key) {
                 let filter = {
-                    seems: AdFilterSeems.SAME,
-                    likes: AdFilterLikes.EQUALS,
+                    seems: FilterSeems.IS,
+                    likes: FilterLikes.EQUALS,
                     valued: field.valued,
-                    ties: AdFilterTies.AND,
+                    ties: FilterTies.AND,
                 };
                 result.push(filter);
             }

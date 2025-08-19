@@ -1,7 +1,5 @@
-import { Valued } from "qin_soul";
+import { Filter, FilterLikes, FilterSeems, FilterTies, JoinTies, Valued } from "qin_soul";
 import { AdApprise } from "./ad-apprise";
-import { AdFilter, AdFilterLikes, AdFilterSeems, AdFilterTies } from "./ad-filter";
-import { AdJoinedTies } from "./ad-joined";
 import { AdRegCalls } from "./ad-reg-calls";
 import { AdRegister } from "./ad-register";
 import { AdSelect } from "./ad-select";
@@ -16,26 +14,24 @@ export class AdRegLoader {
     public refresh(): Promise<void> {
         return new Promise<void>((resolve, reject) => {
             const query = this.mountSelect(false);
-            if (!query.filters) {
-                query.filters = [];
+            if (!query.filterList) {
+                query.filterList = [];
             }
-            for (const field of this._reg.model.fields) {
+            for (const field of this._reg.model.fieldList) {
                 if (field.key) {
-                    let filter: AdFilter = {
-                        seems: AdFilterSeems.SAME,
-                        likes: AdFilterLikes.EQUALS,
+                    let filter: Filter = {
+                        seems: FilterSeems.IS,
+                        likes: FilterLikes.EQUALS,
                         valued: field.valued,
+                        ties: FilterTies.AND
                     };
-                    query.filters.push(filter);
+                    query.filterList.push(filter);
                 }
             }
             AdRegCalls.select(query)
                 .then((rows) => {
                     if (rows.length == 0) {
-                        this._reg.displayInfo(
-                            AdApprise.NO_RESULTS_FOUND,
-                            "{qia_admister}(ErrCode-000018)"
-                        );
+                        this._reg.displayInfo(AdApprise.NO_RESULTS_FOUND, "{qia_admister}(ErrCode-000018)");
                     } else {
                         this._reg.refreshSelected(rows[0]);
                     }
@@ -55,10 +51,7 @@ export class AdRegLoader {
                         .then(() => {
                             this._reg.table.delLines();
                             if (rows.length == 0) {
-                                this._reg.displayInfo(
-                                    AdApprise.NO_RESULTS_FOUND,
-                                    "{qia_admister}(ErrCode-000008)"
-                                );
+                                this._reg.displayInfo(AdApprise.NO_RESULTS_FOUND, "{qia_admister}(ErrCode-000008)");
                             } else {
                                 for (let row of rows) {
                                     this._reg.table.addLine(row);
@@ -72,49 +65,45 @@ export class AdRegLoader {
         });
     }
 
-    public mountSelect(
-        addSearchFilters: boolean = true,
-        plusFilters: Valued[] = null
-    ): AdSelect {
-        let registier = this._reg.registry;
-        let fields = this._reg.model.typeds;
-        let joins = this._reg.based.joins;
-        if (joins) {
-            for (let join of joins) {
-                if (!join.registry) {
-                    join.registry = join.module.tableHead;
+    public mountSelect(addSearchFilters: boolean = true, plusFilters: Valued[] = null): AdSelect {
+        let registry = this._reg.registry;
+        let fieldList = this._reg.model.typedList;
+        let joinList = this._reg.based.joinList;
+        if (joinList) {
+            for (let join of joinList) {
+                if (!join.tableHead) {
+                    join.tableHead = join.module.tableHead;
                 }
                 if (!join.ties) {
-                    join.ties = AdJoinedTies.LEFT;
+                    join.ties = JoinTies.LEFT;
                 }
             }
         }
-        let filters: AdFilter[] = [];
-        if (this._reg.based.filters) {
-            filters.push(...this._reg.based.filters);
+        let filterList: Filter[] = [];
+        if (this._reg.based.filterList) {
+            filterList.push(...this._reg.based.filterList);
         }
-        if (this._reg.expect.filters) {
-            filters.push(...this._reg.expect.filters);
+        if (this._reg.expect.filterList) {
+            filterList.push(...this._reg.expect.filterList);
         }
         if (addSearchFilters) {
             let searchFilters = this._reg.search.getFilters();
             if (searchFilters) {
-                filters.push(...searchFilters);
+                filterList.push(...searchFilters);
             }
         }
         if (plusFilters) {
             for (const valued of plusFilters) {
-                let filter: AdFilter = {
-                    seems: AdFilterSeems.SAME,
-                    likes: AdFilterLikes.EQUALS,
+                let filter: Filter = {
+                    seems: FilterSeems.IS,
+                    likes: FilterLikes.EQUALS,
                     valued: valued,
-                    ties: AdFilterTies.AND,
+                    ties: FilterTies.AND,
                 };
-                filters.push(filter);
+                filterList.push(filter);
             }
         }
-        let orders = this._reg.based.orders;
-        let result: AdSelect = { registier, fields, joins, filters, orders, limit: 300 };
-        return result;
+        let orderList = this._reg.based.orderList;
+        return { registry, fieldList,  joinList, filterList, orderList, limit: 300 };
     }
 }
