@@ -1,14 +1,5 @@
-import {
-    QinAsset,
-    QinBase,
-    QinButton,
-    QinColumn,
-    QinIcon,
-    QinLabel,
-    QinSplitter,
-    QinStack,
-} from "qin_case";
-import { QinAction, QinEvent } from "qin_soul";
+import { QinAsset, QinBase, QinButton, QinColumn, QinIcon, QinLabel, QinSplitter, QinStack } from "qin_case";
+import { QinAction, QinEvent, Registry, TableHead, Typed, Valued } from "qin_soul";
 import { AdApprise, AdApprised } from "./ad-apprise";
 import { AdExpect } from "./ad-expect";
 import { AdField } from "./ad-field";
@@ -22,11 +13,8 @@ import { AdRegLoader } from "./ad-reg-loader";
 import { AdRegModel } from "./ad-reg-model";
 import { AdRegSearch } from "./ad-reg-search";
 import { AdRegTable } from "./ad-reg-table";
-import { AdRegistry } from "./ad-registry";
 import { AdSelect } from "./ad-select";
 import { AdModule, AdScope, AdSetup, AdTools } from "./ad-tools";
-import { AdTyped } from "./ad-typed";
-import { AdValued } from "./ad-valued";
 
 export class AdRegister extends QinColumn {
     private _module: AdModule;
@@ -182,7 +170,7 @@ export class AdRegister extends QinColumn {
         return this._based;
     }
 
-    public get registry(): AdRegistry {
+    public get registry(): Registry {
         return this._based.registry;
     }
 
@@ -283,7 +271,7 @@ export class AdRegister extends QinColumn {
                     return;
                 }
                 let detailFilters: AdFilter[] = [];
-                let detailFixed: AdValued[] = [];
+                let detailFixed: Valued[] = [];
                 if (detail.setup.filters) {
                     for (let filter of detail.setup.filters) {
                         if (filter.linked) {
@@ -427,7 +415,7 @@ export class AdRegister extends QinColumn {
             }
         }
         if (toUpdate.length == 0) return;
-        let registry = {
+        let registry: TableHead = {
             name: "",
         };
         if (joined.registry) {
@@ -438,11 +426,11 @@ export class AdRegister extends QinColumn {
         if (joined.alias) {
             registry["alias"] = joined.alias;
         }
-        let registier: AdRegistry = {
+        let registier: Registry = {
             base: this.based.registry.base,
             tableHead: registry,
         };
-        let fields: AdTyped[] = [];
+        let fields: Typed[] = [];
         for (let field of toUpdate) {
             fields.push(field.typed);
         }

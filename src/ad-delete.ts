@@ -1,7 +1,7 @@
 import { AdFilter } from "./ad-filter";
-import { AdRegistry } from "./ad-registry";
+import { Registry } from "qin_soul";
 
 export type AdDelete = {
-    registier: AdRegistry;
+    registier: Registry;
     filters: AdFilter[];
 };

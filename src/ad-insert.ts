@@ -1,9 +1,7 @@
-import { AdRegistry } from "./ad-registry";
-import { AdToGetID } from "./ad-to-get-id";
-import { AdValued } from "./ad-valued";
+import { Registry, ToGetID, Valued } from "qin_soul";
 
 export type AdInsert = {
-    registier: AdRegistry;
-    valueds: AdValued[];
-    toGetID: AdToGetID;
+    registier: Registry;
+    valueds: Valued[];
+    toGetID: ToGetID;
 };

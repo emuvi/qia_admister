@@ -1,7 +1,5 @@
 import { QinBase, QinEdit, QinLabel, QinMutants, QinMutantsArm, QinRows } from "qin_case";
-import { QinWaiter } from "qin_soul";
-import { AdTyped } from "./ad-typed";
-import { AdValued } from "./ad-valued";
+import { QinWaiter, Typed, Valued } from "qin_soul";
 
 export class AdField {
     private _key: boolean;
@@ -16,7 +14,7 @@ export class AdField {
     private _rows: QinRows;
     private _label: QinLabel;
     private _edit: QinEdit<any> = null;
-    private _typed: AdTyped = null;
+    private _typed: Typed = null;
 
     private _value: any = null;
     private _fixedValue: any = null;
@@ -90,11 +88,11 @@ export class AdField {
         return this._edit;
     }
 
-    public get typed(): AdTyped {
+    public get typed(): Typed {
         return this._typed;
     }
 
-    public get valued(): AdValued {
+    public get valued(): Valued {
         let name = this._name;
         let type = this._edit.getNature();
         let data = this._edit.value;

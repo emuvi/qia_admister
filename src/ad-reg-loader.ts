@@ -1,10 +1,10 @@
+import { Valued } from "qin_soul";
 import { AdApprise } from "./ad-apprise";
 import { AdFilter, AdFilterLikes, AdFilterSeems, AdFilterTies } from "./ad-filter";
 import { AdJoinedTies } from "./ad-joined";
 import { AdRegCalls } from "./ad-reg-calls";
 import { AdRegister } from "./ad-register";
 import { AdSelect } from "./ad-select";
-import { AdValued } from "./ad-valued";
 
 export class AdRegLoader {
     private _reg: AdRegister;
@@ -74,7 +74,7 @@ export class AdRegLoader {
 
     public mountSelect(
         addSearchFilters: boolean = true,
-        plusFilters: AdValued[] = null
+        plusFilters: Valued[] = null
     ): AdSelect {
         let registier = this._reg.registry;
         let fields = this._reg.model.typeds;

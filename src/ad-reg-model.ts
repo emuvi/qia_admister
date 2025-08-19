@@ -1,19 +1,16 @@
+import { Registry, Typed, ToGetID, Valued } from "qin_soul";
 import { AdDelete } from "./ad-delete";
 import { AdField } from "./ad-field";
 import { AdFilter, AdFilterLikes, AdFilterSeems, AdFilterTies } from "./ad-filter";
 import { AdInsert } from "./ad-insert";
 import { AdRegCalls } from "./ad-reg-calls";
 import { AdRegister } from "./ad-register";
-import { AdRegistry } from "./ad-registry";
-import { AdToGetID } from "./ad-to-get-id";
-import { AdTyped } from "./ad-typed";
 import { AdUpdate } from "./ad-update";
-import { AdValued } from "./ad-valued";
 
 export class AdRegModel {
     private _reg: AdRegister;
     private _fields: AdField[] = [];
-    private _typeds: AdTyped[] = null;
+    private _typeds: Typed[] = null;
 
     public constructor(register: AdRegister) {
         this._reg = register;
@@ -23,7 +20,7 @@ export class AdRegModel {
         return this._fields;
     }
 
-    public get typeds(): AdTyped[] {
+    public get typeds(): Typed[] {
         if (this._typeds == null) {
             this._typeds = [];
             for (let field of this._fields) {
@@ -120,9 +117,12 @@ export class AdRegModel {
 
     public async insert(): Promise<AdRegKeys> {
         return new Promise<AdRegKeys>((resolve, reject) => {
-            let valueds = new Array<AdValued>();
-            let regKeys = new Array<AdValued>();
-            let toGetID: AdToGetID = {};
+            let valueds = new Array<Valued>();
+            let regKeys = new Array<Valued>();
+            let toGetID: ToGetID = {
+                name: null,
+                filter: null
+            };
             for (let field of this._fields) {
                 let valued = field.valued;
                 if (valued.name.indexOf(".") === -1) {
@@ -162,8 +162,8 @@ export class AdRegModel {
 
     public async update(): Promise<AdRegKeys> {
         return new Promise<AdRegKeys>((resolve, reject) => {
-            let valueds = new Array<AdValued>();
-            let regKeys = new Array<AdValued>();
+            let valueds = new Array<Valued>();
+            let regKeys = new Array<Valued>();
             for (let field of this._fields) {
                 let valued = field.valued;
                 valueds.push(valued);
@@ -191,7 +191,7 @@ export class AdRegModel {
         return new Promise<void>((resolve, reject) => {
             let detailsPromise = new Array<Promise<number>>();
             for (const detail of this._reg.details) {
-                let registier: AdRegistry = {
+                let registier: Registry = {
                     base: this._reg.registry.base,
                     tableHead: detail.setup.module.tableHead,
                 };
@@ -242,7 +242,7 @@ export class AdRegModel {
         });
     }
 
-    private getMutationValueds(): AdValued[] {
+    private getMutationValueds(): Valued[] {
         let result = [];
         for (let field of this._fields) {
             if (field.hasMutations() && !field.key) {
@@ -269,4 +269,4 @@ export class AdRegModel {
     }
 }
 
-export type AdRegKeys = AdValued[];
+export type AdRegKeys = Valued[];

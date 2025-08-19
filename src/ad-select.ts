@@ -1,12 +1,12 @@
+import { Typed } from "qin_soul";
 import { AdFilter } from "./ad-filter";
 import { AdJoined } from "./ad-joined";
 import { AdOrder } from "./ad-order";
-import { AdRegistry } from "./ad-registry";
-import { AdTyped } from "./ad-typed";
+import { Registry } from "qin_soul";
 
 export type AdSelect = {
-    registier: AdRegistry;
-    fields?: AdTyped[];
+    registier: Registry;
+    fields?: Typed[];
     joins?: AdJoined[];
     filters?: AdFilter[];
     orders?: AdOrder[];

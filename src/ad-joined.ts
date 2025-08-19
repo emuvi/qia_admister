@@ -1,10 +1,10 @@
 import { AdFilter } from "./ad-filter";
-import { AdTableHead } from "./ad-table-head";
+import { TableHead } from "qin_soul";
 import { AdModule } from "./ad-tools";
 
 export type AdJoined = {
     module: AdModule;
-    registry?: AdTableHead;
+    registry?: TableHead;
     alias?: string;
     filters?: AdFilter[];
     ties?: AdJoinedTies;

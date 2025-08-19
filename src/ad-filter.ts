@@ -1,10 +1,10 @@
+import { Valued } from "qin_soul";
 import { AdLinked } from "./ad-linked";
-import { AdValued } from "./ad-valued";
 
 export type AdFilter = {
     seems?: AdFilterSeems;
     likes?: AdFilterLikes;
-    valued?: AdValued;
+    valued?: Valued;
     linked?: AdLinked;
     ties?: AdFilterTies;
 };

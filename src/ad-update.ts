@@ -1,10 +1,9 @@
+import { Registry, Valued } from "qin_soul";
 import { AdFilter } from "./ad-filter";
-import { AdRegistry } from "./ad-registry";
-import { AdValued } from "./ad-valued";
 
 export type AdUpdate = {
-    registier: AdRegistry;
-    valueds: AdValued[];
+    registier: Registry;
+    valueds: Valued[];
     filters?: AdFilter[];
     limit?: number;
 };
