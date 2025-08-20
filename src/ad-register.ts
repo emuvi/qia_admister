@@ -446,16 +446,16 @@ export class AdRegister extends QinColumn {
     }
 
     private _actShortcuts = (ev: QinEvent) => {
-        if (ev.isTyping && !ev.isStart) {
+        if (!ev.isStart && ev.isTyping) {
             if (ev.keyPressed === "F2") {
                 this.tryTurnInsert();
-                ev.consumed();
+                ev.done();
             } else if (ev.keyPressed === "F3") {
                 this.tryTurnSearch();
-                ev.consumed();
+                ev.done();
             } else if (ev.keyPressed === "F4") {
                 this.tryTurnMutate();
-                ev.consumed();
+                ev.done();
             } else if (ev.isEnter && !ev.hasCtrl) {
                 this.tryConfirm().then(() => {
                     if (ev.hasAlt) {
@@ -464,12 +464,12 @@ export class AdRegister extends QinColumn {
                         this.tryTurnSearch();
                     }
                 });
-                ev.consumed();
+                ev.done();
             } else if (ev.hasCtrl && ev.hasAlt) {
                 for (const detail of this._details) {
                     if (detail.title && detail.title.toUpperCase().startsWith(ev.keyPressed)) {
                         detail.action(ev);
-                        ev.consumed();
+                        ev.done();
                         break;
                     }
                 }
