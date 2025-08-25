@@ -1,4 +1,4 @@
-import { QinAsset, QinComboItem, QinComboSet, QinMutants, QinStringSet, QinSuggestionSet } from "qin_case";
+import { QinAsset, QinComboItem, QinComboSet, QinMutants, QinCharsSet, QinSuggestionSet } from "qin_case";
 import { Filter, TableHead, Valued } from "qin_soul";
 import { AdField } from "./ad-field";
 import { AdNames } from "./ad-names";
@@ -46,12 +46,12 @@ function newAdSetup(module: AdModule, scopeList: AdScope[], filterList?: Filter[
     };
 }
 
-function newAdFieldInteger(name: string, title: string): AdField {
+function newAdFieldInt(name: string, title: string): AdField {
     return new AdField({
         key: false,
         name,
         title,
-        kind: QinMutants.INTEGER,
+        kind: QinMutants.INT,
     });
 }
 
@@ -64,15 +64,15 @@ function newAdFieldNumeric(name: string, title: string): AdField {
     });
 }
 
-function newAdFieldString(name: string, title: string, maxLength: number): AdField {
+function newAdFieldChars(name: string, title: string, maxLength: number): AdField {
     return new AdField({
         key: false,
         name,
         title,
-        kind: QinMutants.STRING,
+        kind: QinMutants.CHARS,
         options: {
             maxLength,
-        } as QinStringSet,
+        } as QinCharsSet,
     });
 }
 
@@ -135,9 +135,9 @@ export const AdTools = {
     isSameModule,
     newAdSetup,
     newAdSetupOption,
-    newAdFieldInteger,
+    newAdFieldInt,
     newAdFieldNumeric,
-    newAdFieldString,
+    newAdFieldChars,
     newAdFieldSuggestion,
     newAdFieldDate,
     newAdFieldCombo,

@@ -1,4 +1,4 @@
-import { QinAsset, QinBase, QinButton, QinColumn, QinCombo, QinComboItem, QinIcon, QinLine, QinScroll, QinString } from "qin_case";
+import { QinAsset, QinBase, QinButton, QinColumn, QinCombo, QinComboItem, QinIcon, QinLine, QinScroll, QinChars } from "qin_case";
 import { AdField } from "./ad-field";
 import { AdRegister } from "./ad-register";
 import { Filter, FilterLikes, FilterSeems, FilterTies } from "qin_soul";
@@ -97,7 +97,7 @@ class SearchClause extends QinLine {
     private _qinSame = new SearchSeems();
     private _qinField = new QinCombo();
     private _qinLikes = new SearchCondition();
-    private _qinValue = new QinString();
+    private _qinValue = new QinChars();
     private _qinTies = new SearchTies();
 
     private _qinAdd = new QinButton({ icon: new QinIcon(QinAsset.FacePlus) });
