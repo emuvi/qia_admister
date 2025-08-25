@@ -212,7 +212,7 @@ export class AdField {
         let newValue = null;
         if (this.isFixedValue()) {
              newValue = this.fixedValue;
-         } else if (this.hasDefaultValue) {
+         } else if (this.hasDefaultValue()) {
             newValue = this.defaultValue;
          }
         this.value = newValue;
