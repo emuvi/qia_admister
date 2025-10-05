@@ -136,10 +136,10 @@ class SearchClause extends QinLine {
     }
 
     public clean() {
-        this._qinSame.value = FilterSeems.IS;
-        this._qinLikes.value = FilterLikes.EQUALS;
+        this._qinSame.value = FilterSeems.Is;
+        this._qinLikes.value = FilterLikes.Equals;
         this._qinValue.value = null;
-        this._qinTies.value = FilterTies.AND;
+        this._qinTies.value = FilterTies.And;
     }
 
     public getFilter(): Filter {
@@ -179,8 +179,8 @@ class SearchClause extends QinLine {
 class SearchSeems extends QinCombo {
     public constructor() {
         super();
-        this.addItem({ title: "==", value: FilterSeems.IS });
-        this.addItem({ title: "!=", value: FilterSeems.NOT });
+        this.addItem({ title: "==", value: FilterSeems.Is });
+        this.addItem({ title: "!=", value: FilterSeems.IsNot });
         this.styleAsMaxWidth(64);
     }
 }
@@ -188,14 +188,14 @@ class SearchSeems extends QinCombo {
 class SearchCondition extends QinCombo {
     public constructor() {
         super();
-        this.addItem({ title: "=", value: FilterLikes.EQUALS });
-        this.addItem({ title: ">", value: FilterLikes.BIGGER });
-        this.addItem({ title: "<", value: FilterLikes.LESSER });
-        this.addItem({ title: ">=", value: FilterLikes.BIGGER_EQUALS });
-        this.addItem({ title: "<=", value: FilterLikes.LESSER_EQUALS });
-        this.addItem({ title: "$_", value: FilterLikes.STARTS_WITH });
-        this.addItem({ title: "_$", value: FilterLikes.ENDS_WITH });
-        this.addItem({ title: "_$_", value: FilterLikes.CONTAINS, selected: true });
+        this.addItem({ title: "=", value: FilterLikes.Equals });
+        this.addItem({ title: ">", value: FilterLikes.Bigger });
+        this.addItem({ title: "<", value: FilterLikes.Lesser });
+        this.addItem({ title: ">=", value: FilterLikes.BiggerOrEquals });
+        this.addItem({ title: "<=", value: FilterLikes.LesserOrEquals });
+        this.addItem({ title: "$_", value: FilterLikes.StartsWith });
+        this.addItem({ title: "_$", value: FilterLikes.EndsWith });
+        this.addItem({ title: "_$_", value: FilterLikes.Contains, selected: true });
         this.styleAsMaxWidth(64);
     }
 }
@@ -203,8 +203,8 @@ class SearchCondition extends QinCombo {
 class SearchTies extends QinCombo {
     public constructor() {
         super();
-        this.addItem({ title: "&&", value: FilterTies.AND });
-        this.addItem({ title: "||", value: FilterTies.OR });
+        this.addItem({ title: "&&", value: FilterTies.And });
+        this.addItem({ title: "||", value: FilterTies.Or });
         this.styleAsMaxWidth(64);
     }
 }

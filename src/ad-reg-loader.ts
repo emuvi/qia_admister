@@ -20,10 +20,10 @@ export class AdRegLoader {
             for (const field of this._reg.model.fieldList) {
                 if (field.key) {
                     let filter: Filter = {
-                        seems: FilterSeems.IS,
-                        likes: FilterLikes.EQUALS,
+                        seems: FilterSeems.Is,
+                        likes: FilterLikes.Equals,
                         valued: field.valued,
-                        ties: FilterTies.AND
+                        ties: FilterTies.And
                     };
                     query.filterList.push(filter);
                 }
@@ -75,7 +75,7 @@ export class AdRegLoader {
                     join.tableHead = join.module.tableHead;
                 }
                 if (!join.ties) {
-                    join.ties = JoinTies.LEFT;
+                    join.ties = JoinTies.Left;
                 }
             }
         }
@@ -95,10 +95,10 @@ export class AdRegLoader {
         if (plusFilters) {
             for (const valued of plusFilters) {
                 let filter: Filter = {
-                    seems: FilterSeems.IS,
-                    likes: FilterLikes.EQUALS,
+                    seems: FilterSeems.Is,
+                    likes: FilterLikes.Equals,
                     valued: valued,
-                    ties: FilterTies.AND,
+                    ties: FilterTies.And,
                 };
                 filterList.push(filter);
             }

@@ -201,14 +201,14 @@ export class AdRegModel {
                             let indexField = this._reg.model.getFieldIndexByName(filter.linked.upon);
                             let fixedValue = this._reg.selectedValues[indexField];
                             deleteDetail.filterList.push({
-                                seems: FilterSeems.IS,
-                                likes: FilterLikes.EQUALS,
+                                seems: FilterSeems.Is,
+                                likes: FilterLikes.Equals,
                                 valued: {
                                     name: filter.linked.name,
                                     type: this._reg.model.fieldList[indexField].typed.type,
                                     data: fixedValue,
                                 },
-                                ties: FilterTies.AND,
+                                ties: FilterTies.And,
                             });
                         } else {
                             deleteDetail.filterList.push(filter);
@@ -251,10 +251,10 @@ export class AdRegModel {
         for (let field of this._fieldList) {
             if (field.key) {
                 let filter = {
-                    seems: FilterSeems.IS,
-                    likes: FilterLikes.EQUALS,
+                    seems: FilterSeems.Is,
+                    likes: FilterLikes.Equals,
                     valued: field.valued,
-                    ties: FilterTies.AND,
+                    ties: FilterTies.And,
                 };
                 result.push(filter);
             }

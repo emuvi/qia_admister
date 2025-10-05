@@ -226,14 +226,14 @@ export class AdRegister extends QinColumn {
                             let indexField = this._model.getFieldIndexByName(filter.linked.upon);
                             let fixedValue = this._selectedValues[indexField];
                             detailFilters.push({
-                                seems: FilterSeems.IS,
-                                likes: FilterLikes.EQUALS,
+                                seems: FilterSeems.Is,
+                                likes: FilterLikes.Equals,
                                 valued: {
                                     name: filter.linked.name,
                                     type: this._model.fieldList[indexField].typed.type,
                                     data: fixedValue,
                                 },
-                                ties: FilterTies.AND,
+                                ties: FilterTies.And,
                             });
                             detailFixed.push({
                                 name: filter.linked.name,
@@ -382,14 +382,14 @@ export class AdRegister extends QinColumn {
                 if (filter.linked) {
                     let fromField = this._model.getFieldByName(filter.linked.name);
                     let thisFilter: Filter = {
-                        seems: FilterSeems.IS,
-                        likes: FilterLikes.EQUALS,
+                        seems: FilterSeems.Is,
+                        likes: FilterLikes.Equals,
                         valued: {
                             name: filter.linked.upon,
                             type: fromField.typed.type,
                             data: fromField.valued.data,
                         },
-                        ties: FilterTies.AND,
+                        ties: FilterTies.And,
                     };
                     filterList.push(thisFilter);
                 } else {

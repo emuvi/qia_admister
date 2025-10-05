@@ -44,7 +44,7 @@ export class AdRegCalls {
                         join.tableHead = join.module.tableHead;
                     }
                     if (!join.ties) {
-                        join.ties = JoinTies.LEFT;
+                        join.ties = JoinTies.Left;
                     }
                     toSelectJoinList.push({
                         tableHead: join.tableHead,
