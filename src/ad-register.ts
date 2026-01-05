@@ -65,16 +65,16 @@ export class AdRegister extends QinColumn {
     }
 
     private initInterface() {
-        this._viewSingle.styleAsFlexMax();
-        this._viewVertical.styleAsFlexMax();
-        this._viewHorizontal.styleAsFlexMax();
+        this._viewSingle.styleAsWhole();
+        this._viewVertical.styleAsWhole();
+        this._viewHorizontal.styleAsWhole();
+        this._body.styleAsWhole();
+        this._editor.styleAsWhole();
+        this._search.styleAsWhole();
+        this._table.styleAsWhole();
         this._bar.install(this);
         this._body.stack(this._editor);
         this._body.stack(this._search);
-        this._body.styleAsFlexMax();
-        this._editor.styleAsFlexMax();
-        this._search.styleAsFlexMax();
-        this._table.styleAsFlexMax();
         this._bar.tabIndex = 0;
         this._body.tabIndex = 1;
         this._table.tabIndex = 2;
