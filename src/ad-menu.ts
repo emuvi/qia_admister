@@ -5,12 +5,12 @@ import { AdNames } from "./ad-names";
 import { AdRegister } from "./ad-register";
 import { AdModule, AdScope, AdSetup, AdTools } from "./ad-tools";
 
-export type AdMenuAct<T extends QinBase> = new (module: AdModule, expect: AdExpect) => T;
+export type AdMenuAct = new (module: AdModule, expect: AdExpect) => QinBase;
 
 export type AdMenuItem = {
     group?: string;
     module: AdModule;
-    register?: AdMenuAct<AdRegister>;
+    action: AdMenuAct;
 };
 
 export class AdMenu extends QinColumn {
@@ -39,7 +39,7 @@ export class AdMenu extends QinColumn {
         }
     }
 
-    private getLine(title: string): QinLine {
+    private getLine(title?: string): QinLine {
         if (!title) {
             if (this._lines.length === 0) {
                 const newLine = new QinTitled();
@@ -62,7 +62,7 @@ export class AdMenu extends QinColumn {
 
 export function adMenuStartUp(menuItemList: AdMenuItem[]): QinBase {
     const adSetup = Qine.qinpel.frame.getOption(AdNames.AdSetup) as AdSetup;
-    if (adSetup && adSetup.module) {
+    if (adSetup?.module) {
         for (const menuItem of menuItemList) {
             if (AdTools.isSameModule(menuItem.module, adSetup.module)) {
                 let expect = new AdExpect({
@@ -70,8 +70,8 @@ export function adMenuStartUp(menuItemList: AdMenuItem[]): QinBase {
                     filterList: adSetup.filterList,
                     fixedList: adSetup.fixedList,
                 });
-                if (menuItem.register) {
-                    return new menuItem.register(menuItem.module, expect);
+                if (menuItem.action) {
+                    return new menuItem.action(menuItem.module, expect);
                 } else {
                     throw new Error("No menu action defined");
                 }
