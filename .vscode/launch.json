@@ -7,7 +7,7 @@
         {
             "type": "chrome",
             "request": "launch",
-            "name": "Open QinDesk",
+            "name": "QiaAdMister",
             "url": "http://localhost:5490/pub/qin_desk/index.html",
             "userDataDir": "${workspaceFolder}/.vscode/chrome_debug"
         }
