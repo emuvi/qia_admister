@@ -12,36 +12,34 @@ import { AdRegLoader } from "./ad-reg-loader";
 import { AdRegModel } from "./ad-reg-model";
 import { AdRegSearch } from "./ad-reg-search";
 import { AdRegTable } from "./ad-reg-table";
-import { AdSelect } from "./ad-select";
 import { AdModule, AdScope, AdSetup, AdTools } from "./ad-tools";
 
 export class AdRegister extends QinColumn {
-    private _module: AdModule;
-    private _expect: AdExpect;
-    private _based: AdRegBased;
-    private _model: AdRegModel;
-    private _identifier: string;
+    private readonly _module: AdModule;
+    private readonly _expect: AdExpect;
+    private readonly _based: AdRegBased;
+    private readonly _model: AdRegModel;
+    private readonly _identifier: string;
 
-    private _body: QinStack;
-    private _viewSingle: QinStack;
-    private _viewVertical: QinSplitter;
-    private _viewHorizontal: QinSplitter;
+    private readonly _body: QinStack;
+    private readonly _viewSingle: QinStack;
+    private readonly _viewVertical: QinSplitter;
+    private readonly _viewHorizontal: QinSplitter;
 
-    private _bar: AdRegBar;
-    private _editor: AdRegEditor;
-    private _search: AdRegSearch;
-    private _table: AdRegTable;
+    private readonly _bar: AdRegBar;
+    private readonly _editor: AdRegEditor;
+    private readonly _search: AdRegSearch;
+    private readonly _table: AdRegTable;
 
-    private _loader: AdRegLoader;
+    private readonly _loader: AdRegLoader;
 
-    private _regMode: AdRegMode;
-    private _regView: AdRegView;
+    private _regMode: AdRegMode | null = null;
+    private _regView: AdRegView | null = null;
     private _selectedRow: number = -1;
-    private _selectedValues: string[] = null;
+    private _selectedValues: string[] | null = null;
 
-    private _details = new Array<AdRegDetailMade>();
-
-    private _listener = new Array<AdRegListener>();
+    private readonly _details = new Array<AdRegDetailMade>();
+    private readonly _listener = new Array<AdRegListener>();
     private _enableJoins = true;
 
     public constructor(module: AdModule, expect: AdExpect, based: AdRegBased) {
@@ -50,7 +48,7 @@ export class AdRegister extends QinColumn {
         this._module = module;
         this._expect = expect;
         this._based = based;
-        this._identifier = module.appName + "," + module.title + "," + based.registry.base + "," + based.registry.tableHead.catalog + "," + based.registry.tableHead.schema + "," + based.registry.tableHead.name + "," + based.registry.tableHead.alias;
+        this._identifier = this.getIdentifier(module, based);
         this._model = new AdRegModel(this);
         this._body = new QinStack();
         this._viewSingle = new QinStack();
@@ -62,6 +60,10 @@ export class AdRegister extends QinColumn {
         this._table = new AdRegTable(this);
         this._loader = new AdRegLoader(this);
         this.initInterface();
+    }
+
+    private getIdentifier(module: AdModule, based: AdRegBased): string {
+        return module.appName + "," + module.title + "," + based.registry.base + "," + based.registry.tableHead.catalog + "," + based.registry.tableHead.schema + "," + based.registry.tableHead.name + "," + based.registry.tableHead.alias;
     }
 
     private initInterface() {
@@ -85,11 +87,11 @@ export class AdRegister extends QinColumn {
     }
 
     private initViewSchema() {
-        let sideA = parseInt(this.qinpel.window.loadConfig(this._identifier + "-" + AdRegParams.VIEW_VERTICAL_SIDE_A, "50"));
-        let sideB = parseInt(this.qinpel.window.loadConfig(this._identifier + "-" + AdRegParams.VIEW_VERTICAL_SIDE_B, "50"));
+        let sideA = Number.parseInt(this.qinpel.window.loadConfig(this._identifier + "-" + AdRegParams.VIEW_VERTICAL_SIDE_A, "50"));
+        let sideB = Number.parseInt(this.qinpel.window.loadConfig(this._identifier + "-" + AdRegParams.VIEW_VERTICAL_SIDE_B, "50"));
         this._viewVertical.setBalance({ sideA, sideB });
-        sideA = parseInt(this.qinpel.window.loadConfig(this._identifier + "-" + AdRegParams.VIEW_HORIZONTAL_SIDE_A, "50"));
-        sideB = parseInt(this.qinpel.window.loadConfig(this._identifier + "-" + AdRegParams.VIEW_HORIZONTAL_SIDE_B, "50"));
+        sideA = Number.parseInt(this.qinpel.window.loadConfig(this._identifier + "-" + AdRegParams.VIEW_HORIZONTAL_SIDE_A, "50"));
+        sideB = Number.parseInt(this.qinpel.window.loadConfig(this._identifier + "-" + AdRegParams.VIEW_HORIZONTAL_SIDE_B, "50"));
         this._viewHorizontal.setBalance({ sideA, sideB });
         let selectedView = this.qinpel.window.loadConfig(this._identifier + "-" + AdRegParams.VIEW_SELECTED, AdRegParams.VIEW_SELECTED_VERTICAL);
         if (selectedView === AdRegParams.VIEW_SELECTED_SINGLE) {
@@ -137,7 +139,7 @@ export class AdRegister extends QinColumn {
         return this._identifier;
     }
 
-    public get regMode(): AdRegMode {
+    public get regMode(): AdRegMode | null {
         return this._regMode;
     }
 
@@ -145,7 +147,7 @@ export class AdRegister extends QinColumn {
         return this.regMode != AdRegMode.NOTICE;
     }
 
-    public get regView(): AdRegView {
+    public get regView(): AdRegView | null {
         return this._regView;
     }
 
@@ -177,7 +179,7 @@ export class AdRegister extends QinColumn {
         return this._details;
     }
 
-    public get selectedValues(): string[] {
+    public get selectedValues(): string[] | null {
         return this._selectedValues;
     }
 
@@ -196,7 +198,7 @@ export class AdRegister extends QinColumn {
     }
 
     public addField(field: AdField) {
-        if (field.name.indexOf(".") > -1) {
+        if (field.name.includes(".")) {
             field.putReadOnly();
         }
         this._model.addField(field);
@@ -212,9 +214,9 @@ export class AdRegister extends QinColumn {
     public addDetail(detail: AdRegDetail) {
         const detailTitle = detail.title ?? detail.setup.module.title;
         let button = new QinButton({ label: new QinLabel(detailTitle) });
-        let action = (_) => {
+        let action = () => {
             this.tryConfirm().then(() => {
-                if (!this.hasRowSelected()) {
+                if (!this.hasRowSelected() || !this._selectedValues) {
                     this.qinpel.frame.showError("You must select a row before show the details of " + detailTitle, "{qia_admister}(ErrCode-000015)");
                     return;
                 }
@@ -295,7 +297,7 @@ export class AdRegister extends QinColumn {
     }
 
     private initJoins() {
-        this._based.joinList.forEach((join) => {
+        this._based.joinList?.forEach((join) => {
             if (join.filterList) {
                 let allLinkedFields = new Array<AdField>();
                 let allLinkedWith = new Array<string>();
@@ -532,7 +534,7 @@ export class AdRegister extends QinColumn {
 
     public getSelectValueOf(fieldName: string) {
         let index = this._model.getFieldIndexByName(fieldName);
-        return this._selectedValues[index];
+        return this._selectedValues ? this._selectedValues[index] : null;
     }
 
     public tryTurnInsert(): Promise<AdRegTurningInsert> {
@@ -540,7 +542,7 @@ export class AdRegister extends QinColumn {
             this.tryTurnMode(AdRegMode.INSERT)
                 .then(() => {
                     this._model.clean();
-                    resolve({} as AdRegTurningInsert);
+                    resolve({});
                 })
                 .catch((err) => reject(err));
         });
@@ -550,7 +552,7 @@ export class AdRegister extends QinColumn {
         return new Promise<AdRegTurningSearch>((resolve, reject) => {
             this.tryTurnMode(AdRegMode.SEARCH)
                 .then(() => {
-                    resolve({} as AdRegTurningInsert);
+                    resolve({});
                 })
                 .catch((err) => reject(err));
         });
@@ -567,7 +569,7 @@ export class AdRegister extends QinColumn {
                     let turningNotice = {
                         oldRow: this._selectedRow,
                         newRow: this._selectedRow,
-                    } as AdRegTurningNotice;
+                    };
                     let canceledNotice = this.callTryListeners(
                         AdRegTurn.TURN_NOTICE,
                         turningNotice
@@ -586,7 +588,7 @@ export class AdRegister extends QinColumn {
     public tryTurnNoticeRow(row: number, values: string[]): Promise<AdRegTurningNotice> {
         return new Promise<AdRegTurningNotice>((resolve, reject) => {
             if (this._expect.scopeList.find((scope) => scope === AdScope.RELATE)) {
-                let selected = {};
+                let selected = {} as any;
                 for (let i = 0; i < this._model.fieldList.length; i++) {
                     selected[this._model.fieldList[i].name] = values[i];
                 }
@@ -634,7 +636,7 @@ export class AdRegister extends QinColumn {
                     let turning = {
                         oldMode: this._regMode,
                         newMode: mode,
-                    } as AdRegTurningMode;
+                    };
                     let canceled = this.callTryListeners(AdRegTurn.TURN_MODE, turning);
                     if (canceled) {
                         reject(canceled);
@@ -655,7 +657,14 @@ export class AdRegister extends QinColumn {
         return this._selectedRow >= 0 && this._selectedRow < this._table.getLinesSize();
     }
 
-    private selectRowAndValues(row: number, values: string[]) {
+    private selectRowAndValues(row: number, values: string[] | null) {
+        if (values == null) {
+            this._model.clean();
+            this._selectedRow = -1;
+            this._selectedValues = null;
+            this._table.unselectAll();
+            return;
+        }
         for (let i = 0; i < values.length; i++) {
             this._model.setValue(i, values[i]);
         }
@@ -989,13 +998,13 @@ export class AdRegister extends QinColumn {
     }
 
     public delListener(listener: AdRegListener) {
-        var index = this._listener.indexOf(listener);
+        let index = this._listener.indexOf(listener);
         if (index >= 0) {
             this._listener.splice(index, 1);
         }
     }
 
-    private callTryListeners(event: AdRegTurn, valued: any): AdRegTryCanceled {
+    private callTryListeners(event: AdRegTurn, valued: any): AdRegTryCanceled | null {
         this._listener.forEach((listen) => {
             if (listen.event === event) {
                 if (listen.onTry) {
@@ -1063,13 +1072,13 @@ export enum AdRegTurn {
 }
 
 export type AdRegTurningView = {
-    oldView: AdRegView;
-    newView: AdRegView;
+    oldView: AdRegView | null;
+    newView: AdRegView | null;
 };
 
 export type AdRegTurningMode = {
-    oldMode: AdRegMode;
-    newMode: AdRegMode;
+    oldMode: AdRegMode | null;
+    newMode: AdRegMode | null;
 };
 
 export type AdRegTurningInsert = {};
